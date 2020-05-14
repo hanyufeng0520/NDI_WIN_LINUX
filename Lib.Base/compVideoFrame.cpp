@@ -47,25 +47,6 @@ int	CompVideoFrame::saveToFile(const char* _fileName) const
 	return 0;
 }
 
-void CompVideoFrame::setTimeID(const TimeIDFrame& _timeID) const
-{
-	if (m_frame)
-	{
-		header* s = (header*)m_frame;
-		s->timeID = _timeID;
-	}
-}
-
-TimeIDFrame CompVideoFrame::getTimeID() const
-{
-	if (m_frame)
-	{
-		header * s = (header *)m_frame;
-		return s->timeID;
-	}
-	return 0;
-}
-
 unsigned char* CompVideoFrame::getRawWithSize() const
 {
 	return &m_frame[sizeof(header) - sizeof(unsigned long)];

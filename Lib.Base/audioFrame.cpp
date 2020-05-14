@@ -106,16 +106,6 @@ Timecode AudioFrame::getTC() const
 	return m_tc;
 }
 
-void AudioFrame::setTimeID(const TimeIDFrame& _timeID)
-{
-	m_timeID = _timeID;
-}
-
-TimeIDFrame AudioFrame::getTimeID() const
-{
-	return m_timeID;
-}
-
 int AudioFrame::getTotalSize() const
 {
 	return m_totalSize;
@@ -153,40 +143,4 @@ void AudioFrame::SetSampleCnt(uint32_t sampleCnt)
 unsigned long AudioFrame::getBufferTotalSize() const
 {
 	return m_totalSize - sizeof(header);
-}
-
-bool CAudioSampleNbCycle::SetFrameRate(uint32_t _frameRate)
-{
-	m_SampleNbPosInCycle = 0;
-	if (_frameRate != 59 && _frameRate != 29)
-	{
-		m_pSampleNbData = nullptr;
-		return false;
-	}
-	if (_frameRate == 59)
-	{
-		m_pSampleNbData = (uint32_t*)Audio59SampleTable;
-		m_nbSampleOfCycle = sizeof(Audio59SampleTable) / sizeof(uint32_t);
-	}
-	else
-	{
-		m_pSampleNbData = (uint32_t*)Audio29SampleTable;
-		m_nbSampleOfCycle = sizeof(Audio29SampleTable) / sizeof(uint32_t);
-	}
-	return  true;
-}
-
-uint32_t CAudioSampleNbCycle::GetSampleNb()
-{
-	if (!m_pSampleNbData)
-		return 0;
-	uint32_t nb = m_pSampleNbData[m_SampleNbPosInCycle];
-	return nb;
-}
-
-void CAudioSampleNbCycle::MoveNext()
-{
-	if (!m_pSampleNbData || m_nbSampleOfCycle == 0)
-		return;
-	m_SampleNbPosInCycle = ++m_SampleNbPosInCycle % m_nbSampleOfCycle;
 }

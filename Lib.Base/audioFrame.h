@@ -2,23 +2,6 @@
 #include <cstdint>
 #include <memory>
 #include "IBaseFrame.h"
-#include "TimeID.h"
-
-class  CAudioSampleNbCycle
-{
-public:
-	CAudioSampleNbCycle() = default;
-	bool   SetFrameRate(uint32_t _frameRate/*29 or 59*/);
-	uint32_t GetSampleNb();
-	void   MoveNext();
-private:
-	const  uint32_t Audio29SampleTable[5] = { 1601,1602,1601,1602,1602 };
-	const  uint32_t Audio59SampleTable[5] = { 800,801,801,801,801 };
-
-	uint32_t*   m_pSampleNbData = nullptr;
-	uint32_t    m_SampleNbPosInCycle = 0;
-	uint32_t	m_nbSampleOfCycle = 0;
-};
 
 class AudioFrame :public IBaseFrame
 {
@@ -34,7 +17,6 @@ class AudioFrame :public IBaseFrame
 public:
 	struct header
 	{
-		TimeIDFrame	timeID = 0;
 		uint32_t	rawSize = 0;
 	};
 
@@ -62,8 +44,6 @@ public:
 	double			getPts()const;
 	void			setTC(const Timecode& _tc) override;
 	Timecode		getTC() const override;
-	void			setTimeID(const TimeIDFrame& _timeID);
-	TimeIDFrame		getTimeID() const;
 };
 
 using pAframe = std::shared_ptr<AudioFrame>;

@@ -225,7 +225,6 @@
     <ClCompile Include="CommonHelper.cpp" />
     <ClCompile Include="compVideoFrame.cpp" />
     <ClCompile Include="eventClock.cpp" />
-    <ClCompile Include="FpsHelper.cpp" />
     <ClCompile Include="CapturePoolMgr.cpp" />
     <ClCompile Include="LoopBuffer.cpp" />
     <ClCompile Include="platform.cpp" />
@@ -242,12 +241,10 @@
     <ClInclude Include="ControlerTimeCode.h" />
     <ClInclude Include="easyThread.h" />
     <ClInclude Include="eventClock.h" />
-    <ClInclude Include="FpsHelper.h" />
     <ClInclude Include="FrameList.h" />
     <ClInclude Include="FrameListEx.h" />
     <ClInclude Include="GPUFrame.h" />
     <ClInclude Include="IBaseFrame.h" />
-    <ClInclude Include="id.h" />
     <ClInclude Include="IMasterClock.h" />
     <ClInclude Include="locker.h" />
     <ClInclude Include="LoopBuffer.h" />
@@ -259,16 +256,10 @@
     <ClInclude Include="SRWLocker.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="SyncList.h" />
-    <ClInclude Include="SyncMap.h" />
     <ClInclude Include="SyncQueue.h" />
-    <ClInclude Include="SyncSet.h" />
-    <ClInclude Include="SyncUnorderedMap.h" />
-    <ClInclude Include="SyncVector.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="timecode.h" />
-    <ClInclude Include="TimeCodeWithDot.h" />
     <ClInclude Include="ClockTimer.h" />
-    <ClInclude Include="TimeID.h" />
     <ClInclude Include="VideoFormatDef.h" />
     <ClInclude Include="videoFrame.h" />
   </ItemGroup>

@@ -3,7 +3,6 @@
 #include "timecode.h"
 #include <memory>
 #include "IBaseFrame.h"
-#include "TimeID.h"
 
 //|-----------|
 //|IDR 1 uint8_t |
@@ -30,7 +29,6 @@ public:
 		//VideoANCDataStruct	ancData;
 		bool				isIDRFrame;
 		Timecode			tc;
-		TimeIDFrame         timeID;
 		uint32_t			rawSize;
 	};
 	header* m_header = nullptr;
@@ -61,8 +59,6 @@ public:
 	void getAncFieldInfo(uint8_t *srcFieldDataEven, uint32_t &dwEvenSize, uint8_t *srcOddFieldData, uint32_t &dwOddSize) const;*/
 
 	unsigned long getDataSize() const override;
-	void     setTimeID(const TimeIDFrame& _timeID) const;
-	TimeIDFrame getTimeID() const;
 	void copyRawData(CompVideoFrame*pSrc)
 	{
 		this->setBufferSize(pSrc->getRawSize());
