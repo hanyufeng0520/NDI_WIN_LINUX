@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/test_NDI/v16
+/Lib.Base/x64
+/Lib.Config/x64
+/Lib.FrameConsumerNDI/x64
+/Lib.FrameProviderYuvFile/x64
+/test_NDI/.vs/test_NDI/v16
+/test_NDI/x64

@@ -1,0 +1,10 @@
+#pragma once
+#include "../Lib.Base/videoFrame.h"
+#include "../Lib.Base/audioFrame.h"
+#include "../Lib.Base/compVideoFrame.h"
+
+__interface IFPInputCallBack
+{
+	void cb(uint32_t _channelID, pVFrame pFrameVideo = nullptr, pCVframe pFrameVideo960 = nullptr, pCVframe pFrameVideo480 = nullptr, pAframe pFrameAudio = nullptr);
+	void cb_FPS(uint32_t _channelID, int vFps = 0, int aFPS = 0);
+};
