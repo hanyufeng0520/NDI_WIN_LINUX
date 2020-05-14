@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "IFrameConsumerChannel.h"
-#include "../Lib.Base/AutoLoopClock.h"
 #include "../Lib.Base/SemaphoreClock.h"
 #include "../Lib.Base/FrameList.h"
 #include "../inc/NDI/Processing.NDI.Lib.h"
@@ -12,7 +11,6 @@
 
 class CFrameConsumerNDI :public IFrameConsumerChannel
 {
-	AutoLoopClock                           m_autoClock;
 	SemaphoreClock                          m_SemaphoreClock;
 	SemaphoreClock                          m_SemaphoreClockA;
 	const static uint32_t                   m_dwMax = 3;

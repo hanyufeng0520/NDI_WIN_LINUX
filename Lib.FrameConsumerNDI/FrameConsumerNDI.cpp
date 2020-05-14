@@ -7,7 +7,6 @@ CFrameConsumerNDI::CFrameConsumerNDI()
 {
 	m_pNDI_send = nullptr;
 	m_stResample.Initialize();
-	m_autoClock.start(Config->getFrameRateDen(), Config->getFrameRateNum());
 
 	NDI_video_frame.FourCC = NDIlib_FourCC_type_UYVY;
 	NDI_video_frame.picture_aspect_ratio = 16.0f / 9.0f;
@@ -20,7 +19,6 @@ CFrameConsumerNDI::CFrameConsumerNDI()
 
 CFrameConsumerNDI::~CFrameConsumerNDI()
 {
-	m_autoClock.stop();
 	stopChannel(0);
 	if (m_pNDI_send)
 		NDIlib_send_destroy(m_pNDI_send);

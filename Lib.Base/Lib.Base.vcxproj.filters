@@ -36,28 +36,10 @@
     <ClCompile Include="CommonHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="consoleUtil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="affinily.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CapturePoolMgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BMRaudioFrame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IMasterClock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ManualClock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="platform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="registryEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LoopBuffer.cpp">
@@ -66,28 +48,10 @@
     <ClCompile Include="timecode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AsyncFileWriterImp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommonSampleBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CPUUsageHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FpsHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SRWLocker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AutoLoopClock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AutoTimerClock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TimeID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,19 +86,10 @@
     <ClInclude Include="id.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="consoleUtil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="affinily.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="easyThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CapturePoolMgr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BMRaudioFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FrameList.h">
@@ -143,46 +98,22 @@
     <ClInclude Include="IMasterClock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ManualClock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="platform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="registryEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SyncList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ClosedCaptionPacket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LoopBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputStream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AsyncFileWriterImp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SyncMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CommonSampleBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VideoFormatDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DualObjectWrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StringHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CPUUsageHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="async_thread.h">
@@ -197,25 +128,13 @@
     <ClInclude Include="SRWLocker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AutoLoopClock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AutoTimerClock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SyncUnorderedMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SyncVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BMRPoolMgr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GPUFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Time_Statistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TimeID.h">
@@ -224,22 +143,10 @@
     <ClInclude Include="IBaseFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DaysSince20190101.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SyncQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DllParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DateTimeCode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ControlerTimeCode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Date.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TimeCodeWithDot.h">
@@ -248,16 +155,10 @@
     <ClInclude Include="SyncSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DateTimeCodeWithDot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Synchronized.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClockTimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tga.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FrameListEx.h">

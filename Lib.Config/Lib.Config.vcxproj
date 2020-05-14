@@ -223,12 +223,6 @@
     <ProjectReference Include="..\Lib.Base\Lib.Base.vcxproj">
       <Project>{a88ddaa9-1441-4fa9-8edf-14c79f2212bf}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Lib.Logger\Lib.Logger.vcxproj">
-      <Project>{974d30cd-d7e8-424e-81df-6882824f736d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Lib.SerialNumber\Lib.SerialNumber.vcxproj">
-      <Project>{3ccd69dc-be22-4623-be7f-c7feabb9c393}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
