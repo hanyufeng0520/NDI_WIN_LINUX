@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "Lib.Base/timecode.h"
+#include "timecode.h"
 #include "Date.h"
 #include <cmath>
 
