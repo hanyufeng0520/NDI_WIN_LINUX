@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "FrameConsumerNDI.h"
+﻿#include "FrameConsumerNDI.h"
 #include "../lib.Config/IConfig.h"
 #include "../Lib.Base/ClockTimer.h"
 

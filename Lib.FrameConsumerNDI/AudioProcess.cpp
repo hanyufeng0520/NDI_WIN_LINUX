@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "AudioProcess.h"
 #include "../lib.Config/IConfig.h"
 
