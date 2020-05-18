@@ -14,8 +14,8 @@ public:
 
 	virtual unsigned char*	getRaw() const = 0;
 	virtual int				getTotalSize() const = 0;
-	virtual int				setBufferSize(unsigned long _rawSize) = 0;
-	virtual unsigned long	getDataSize() const = 0;
+	virtual int				setBufferSize(uint32_t _rawSize) = 0;
+	virtual uint32_t	getDataSize() const = 0;
 	virtual void			setTC(const Timecode& _tc) = 0;
 	virtual Timecode		getTC() const = 0;
 

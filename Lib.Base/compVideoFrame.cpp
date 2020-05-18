@@ -18,12 +18,12 @@ unsigned char* CompVideoFrame::getRaw() const
 	return &m_frame[sizeof(header)];
 }
 
-unsigned long CompVideoFrame::getRawSize() const
+uint32_t CompVideoFrame::getRawSize() const
 {
 	return getDataSize();
 }
 
-unsigned long CompVideoFrame::getDataSize() const
+uint32_t CompVideoFrame::getDataSize() const
 {
 	if (m_frame)
 	{
@@ -51,7 +51,7 @@ int	CompVideoFrame::saveToFile(const char* _fileName) const
 
 unsigned char* CompVideoFrame::getRawWithSize() const
 {
-	return &m_frame[sizeof(header) - sizeof(unsigned long)];
+	return &m_frame[sizeof(header) - sizeof(uint32_t)];
 }
 
 unsigned char* CompVideoFrame::getRawWithHeader() const
@@ -59,7 +59,7 @@ unsigned char* CompVideoFrame::getRawWithHeader() const
 	return m_frame;
 }
 
-unsigned long CompVideoFrame::getRawWithHeaderSize() const
+uint32_t CompVideoFrame::getRawWithHeaderSize() const
 {
 	if (m_frame)
 	{
@@ -74,7 +74,7 @@ int CompVideoFrame::getTotalSize() const
 	return m_totalSize - sizeof(header);
 }
 
-int CompVideoFrame::setBufferSize(unsigned long _rawSize)
+int CompVideoFrame::setBufferSize(uint32_t _rawSize)
 {
 	if (m_totalSize - sizeof(header) < _rawSize)
 	{

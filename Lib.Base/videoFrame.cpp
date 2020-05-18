@@ -11,7 +11,7 @@ VideoFrame::~VideoFrame()
 		free(m_pBuffer);
 }
 
-int VideoFrame::setBufferSize(unsigned long _size)
+int VideoFrame::setBufferSize(uint32_t _size)
 {
 	if (_size > m_totalSize)
 	{
@@ -34,9 +34,9 @@ int VideoFrame::setToBlack(bool _flagOnly)
 		{
 		case VideoColorSpace::CC_422_UYVY:
 		{
-			unsigned long size = getBufferSize() / 4;
-			unsigned long* dest = (unsigned long*)getBuffer();
-			for (unsigned long i = 0; i < size; i++)
+			uint32_t size = getBufferSize() / 4;
+			uint32_t* dest = (uint32_t*)getBuffer();
+			for (uint32_t i = 0; i < size; i++)
 				*dest++ = 0x10801080;
 			break;
 		}

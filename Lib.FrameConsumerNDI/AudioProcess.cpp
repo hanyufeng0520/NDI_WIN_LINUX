@@ -40,18 +40,20 @@ int CAudioProcess::ProcessAudioToFLT(int nSampleCount, unsigned char* pSrcAudio,
 	int ret = -1;
 	if (!m_bInit)
 		return ret;
-	int nSampleCountNew = audioCount * nSampleCount;
-	long* pAudioNew = (long*)m_pSrcAudioNew;
+	int32_t nSampleCountNew = audioCount * nSampleCount;
+	int32_t* pAudioNew = (int32_t*)m_pSrcAudioNew;
 	for (int nIndex = 0; nIndex < audioCount; ++nIndex)
 	{
-		long* pSrc = (long*)pSrcAudio;
+		int32_t* pSrc = (int32_t*)pSrcAudio;
 		for (int i = 0; i < nSampleCount; i++)
 		{
 			*pAudioNew++ = pSrc[nIndex];
 			pSrc += 16;
 		}
 	}
+
 	int dst_nb_samples = av_rescale_rnd(swr_get_delay(swr_ctx, src_rate) + nSampleCountNew, dst_rate, src_rate, AV_ROUND_UP);
+
 	// 	if (audioCount == 16)
 	// 		ret = swr_convert(swr_ctx, (uint8_t **)&pDstAudio, dst_nb_samples, (const uint8_t **)&pSrcAudio, nSampleCount);
 	// 	else

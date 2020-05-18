@@ -24,7 +24,7 @@ class VideoFrame
 	bool			     m_isBlackFrame = false;
 	VideoColorSpace		 m_colorSpace = VideoColorSpace::CC_422_UYVY;
 
-	int					 setBufferSize(unsigned long _size);
+	int					 setBufferSize(uint32_t _size);
 
 public:
 	VideoFrame();
@@ -32,10 +32,10 @@ public:
 
 	int						init(FPTVideoFormat _videoFormat, VideoColorSpace _colorSpace);
 	int						init(VideoFrameSize _frameSize, VideoColorSpace _colorSpace);
-	unsigned long			getWidth() const { return m_width; }
-	unsigned long			getHeight() const { return m_height; }
+	uint32_t			getWidth() const { return m_width; }
+	uint32_t			getHeight() const { return m_height; }
 	unsigned char*			getBuffer() const { return m_pBuffer; }
-	unsigned long			getBufferSize() const { return m_usedSize; }
+	uint32_t			getBufferSize() const { return m_usedSize; }
 	bool					isInterlaced() const { return m_isInterlaced; }
 	int						setToBlack(bool _flagOnly = false);
 	void					resetBlackFlag() { m_isBlackFrame = false; }

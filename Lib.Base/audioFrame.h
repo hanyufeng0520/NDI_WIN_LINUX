@@ -27,18 +27,18 @@ public:
 
 	unsigned char *	getRaw() const override;
 	int				getTotalSize() const override;
-	int				setBufferSize(unsigned long _rawSize) override;
-	unsigned long	getDataSize() const override;
+	int				setBufferSize(uint32_t _rawSize) override;
+	uint32_t	getDataSize() const override;
 	unsigned char*	getRawWithHeader() const;
-	unsigned long	getRawWithHeaderSize() const;
+	uint32_t	getRawWithHeaderSize() const;
 
 	uint32_t		getNbBitPerSample() const { return m_nbBitPerSample; }
 	void			setToMute(uint32_t _size = 0) const;
 	void			SetMonoCnt(uint32_t cnt);
 	void			SetSampleCnt(uint32_t  sampleCnt);
 	uint32_t		GetMonoCnt() const { return m_monoCnt; }
-	unsigned long	getBufferTotalSize() const;
-	unsigned long	getSampleCount() const { return m_sampleCnt; }
+	uint32_t	getBufferTotalSize() const;
+	uint32_t	getSampleCount() const { return m_sampleCnt; }
 	bool			isMute() const;
 	void			setPts(double pts);
 	double			getPts()const;

@@ -18,8 +18,8 @@ public:
 	int ProcessAudioToFLT(int nSampleCount, unsigned char* pSrcAudio, int audioCount, unsigned char* pDstAudio);
 private:
 	struct SwrContext *swr_ctx;
-	int64_t src_ch_layout = 1;
-	int64_t dst_ch_layout = 1;
+	int64_t src_ch_layout = 16;
+	int64_t dst_ch_layout = 16;
 	int src_rate = 48000;
 	int dst_rate = 48000;
 	int src_nb_channels = 16;

@@ -277,8 +277,8 @@ bool CWaveReader::getAudioFrame(pAframe& _aFrame)
 				}
 				else if (m_wavInfo.format.BitsPerSample == 24)
 				{
-					long* s = (long*)pSource8;
-					long  d = (*s) << 8;
+					int32_t* s = (int32_t*)pSource8;
+					int32_t  d = (*s) << 8;
 
 					if (d & 0x80000000)
 						d |= 0x000000FF;

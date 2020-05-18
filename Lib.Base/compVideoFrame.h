@@ -39,11 +39,11 @@ public:
 	unsigned char* getRaw() const override;
 	unsigned char* getRawWithSize() const;
 	unsigned char* getRawWithHeader() const;
-	unsigned long  getRawWithHeaderSize() const;
+	uint32_t  getRawWithHeaderSize() const;
 
 	int			  getTotalSize() const override;
-	int			  setBufferSize(unsigned long _rawSize)override;
-	unsigned long getRawSize() const;
+	int			  setBufferSize(uint32_t _rawSize)override;
+	uint32_t getRawSize() const;
 
 	void     setTC(const Timecode& _tc)override;
 	Timecode getTC() const override;
@@ -59,7 +59,7 @@ public:
 	void setAncFieldInfo(uint8_t *srcFieldDataEven, uint32_t dwEvenSize, uint8_t *srcOddFieldData, uint32_t dwOddSize) const;
 	void getAncFieldInfo(uint8_t *srcFieldDataEven, uint32_t &dwEvenSize, uint8_t *srcOddFieldData, uint32_t &dwOddSize) const;*/
 
-	unsigned long getDataSize() const override;
+	uint32_t getDataSize() const override;
 	void copyRawData(CompVideoFrame*pSrc)
 	{
 		this->setBufferSize(pSrc->getRawSize());

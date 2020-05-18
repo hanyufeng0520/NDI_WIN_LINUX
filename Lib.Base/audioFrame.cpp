@@ -39,7 +39,7 @@ bool AudioFrame::isMute() const
 	return true;
 }
 
-unsigned long AudioFrame::getDataSize() const
+uint32_t AudioFrame::getDataSize() const
 {
 	if (m_raw)
 	{
@@ -54,7 +54,7 @@ unsigned char* AudioFrame::getRawWithHeader() const
 	return m_raw;
 }
 
-unsigned long AudioFrame::getRawWithHeaderSize() const
+uint32_t AudioFrame::getRawWithHeaderSize() const
 {
 	if (m_raw)
 	{
@@ -64,7 +64,7 @@ unsigned long AudioFrame::getRawWithHeaderSize() const
 	return 0;
 }
 
-int AudioFrame::setBufferSize(unsigned long _rawSize)
+int AudioFrame::setBufferSize(uint32_t _rawSize)
 {
 	if (m_raw && ((header*)m_raw)->rawSize == _rawSize)
 		return 0;
@@ -140,7 +140,7 @@ void AudioFrame::SetSampleCnt(uint32_t sampleCnt)
 	setBufferSize(size);
 }
 
-unsigned long AudioFrame::getBufferTotalSize() const
+uint32_t AudioFrame::getBufferTotalSize() const
 {
 	return m_totalSize - sizeof(header);
 }

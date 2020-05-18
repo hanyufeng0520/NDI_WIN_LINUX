@@ -152,7 +152,7 @@ struct ControlerTimeCode
 
 		if (s_UnitsCorrection != 0)
 		{
-			unsigned long nbrMinute = _Frame / s_UnitsPerMinute;
+			uint32_t nbrMinute = _Frame / s_UnitsPerMinute;
 
 			_Frame = _Frame + (nbrMinute * s_UnitsCorrection);
 

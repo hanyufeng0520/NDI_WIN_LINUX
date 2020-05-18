@@ -13,7 +13,7 @@ class CFrameProviderYuvFile :public IFrameProviderChannel
 	FILE*                    m_fpVideo = nullptr;
 	bool                     m_initDone;
 	Locker                   m_locker;
-	unsigned long            m_dwCnlID;
+	int32_t					 m_dwCnlID;
 	IFPInputCallBack*        m_pGetFrameCB;
 	std::queue<pVFrame>		 m_queueFrame;
 	std::queue<pAframe>		 m_queueAudio;
