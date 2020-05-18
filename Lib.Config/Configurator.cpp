@@ -26,7 +26,7 @@ Configurator::Configurator()
 #ifdef _MSC_VER
 	strcpy_s(m_strConfigPath, buf);
 #else
-	sprintf(m_strConfigPath, "/home/jiankang/Config.ini");
+	strcpy(m_strConfigPath, buf);
 #endif _MSC_VER
 	printf("Config path:%s\n", m_strConfigPath);
 	load();
@@ -906,6 +906,9 @@ size_t Configurator::LoadLSMConfigValue(EM_Channel_Detail &recorder, CamID nCame
 	nLeftPos = strItemValue.find(pFind);
 	if (std::string::npos != nLeftPos) //FILE
 	{
+		memset(recorder.szItemName, 0, MAX_PATH);
+		memset(recorder.szAudioName, 0, MAX_PATH);
+
 		nRightPos = strItemValue.find('\"', nLeftPos + nFindSize);
 		if (std::string::npos == nRightPos)
 			return std::string::npos;
@@ -921,20 +924,21 @@ size_t Configurator::LoadLSMConfigValue(EM_Channel_Detail &recorder, CamID nCame
 		if (std::string::npos != nLeftPos_1)
 		{
 			nFindSize = 2;
-			nRightPos = strItemValue.size();
+			//nRightPos = strItemValue.size();
+			nRightPos = strItemValue.find_last_of("\"");
 			if (std::string::npos != nRightPos)
 			{
 #ifdef _MSC_VER
 				sprintf_s(recorder.szAudioName, MAX_PATH, "%s",
-					strItemValue.substr(nLeftPos_1 + nFindSize, nRightPos - (nLeftPos_1 + nFindSize) - 1).c_str());
+					strItemValue.substr(nLeftPos_1 + nFindSize, nRightPos - (nLeftPos_1 + nFindSize)).c_str());
 #else
-				sprintf(recorder.szAudioName, "%s", "/home/jiankang/Videos/football.wav");
-					//strItemValue.substr(nLeftPos_1 + nFindSize, nRightPos - (nLeftPos_1 + nFindSize) - 1).c_str());
+				sprintf(recorder.szAudioName, "%s", 
+					strItemValue.substr(nLeftPos_1 + nFindSize, nRightPos - (nLeftPos_1 + nFindSize)).c_str());
 #endif
 			}
 		}
-		printf("Video:%s\n", recorder.szItemName);
-		printf("Audio:%s\n", recorder.szAudioName);
+		printf("Video:%s \n", recorder.szItemName);
+		printf("Audio:%s \n", recorder.szAudioName);
 		if (m_defaultProviderType == FrameProviderType::FPT_MJPEG_FILE)
 			recorder.providerType = m_defaultProviderType;
 		else
