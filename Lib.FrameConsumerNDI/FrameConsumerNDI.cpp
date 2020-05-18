@@ -5,8 +5,7 @@
 CFrameConsumerNDI::CFrameConsumerNDI()
 {
 	m_pNDI_send = nullptr;
-	m_stResample.Initialize();
-
+	//m_stResample.Initialize();
 	NDI_video_frame.FourCC = NDIlib_FourCC_type_UYVY;
 	NDI_video_frame.picture_aspect_ratio = 16.0f / 9.0f;
 	NDI_video_frame.timecode = NDIlib_send_timecode_synthesize;
@@ -53,6 +52,7 @@ int CFrameConsumerNDI::addChannel(uint32_t dwCnlID, const sFrameConsumer_Paramet
 	else
 		NDI_send_create_desc.p_ndi_name = Config->getPGM1NDIName().c_str();
 	m_pNDI_send = NDIlib_send_create(&NDI_send_create_desc);
+
 	if (m_pNDI_send == nullptr)
 	{
 		printf("CFrameConsumerNDI::addChannel NDIlib_send_create failed.\n");
@@ -65,13 +65,14 @@ int CFrameConsumerNDI::addChannel(uint32_t dwCnlID, const sFrameConsumer_Paramet
 
 int CFrameConsumerNDI::OutputFrames(uint32_t nChannelID, pVFrame pVideo, pAframe pAudio, Timecode *tc, uint32_t &dwFramesDropped)
 {
+	return 0;
 	if (m_listV.size() > FRAME_BUFFER_SIZE)
 		return 1;
 	m_listV.emplace_back(pVideo);
 	m_listA.emplace_back(pAudio);
 	m_SemaphoreClock.raiseEvent();
-	if (m_outNum++ % 3000 == 0)
-		printf("CFrameConsumerNDI::OutputFrames (%I64d) \n", m_outNum);
+	//if (m_outNum++ % 3000 == 0)
+	printf("CFrameConsumerNDI::OutputFrames (%I64d) \n", ++m_outNum);
 	return 0;
 }
 
@@ -117,10 +118,10 @@ void CFrameConsumerNDI::sentToNDI()
 		NDI_audio_frame.no_samples = pAudio->getSampleCount();
 		NDI_audio_frame.channel_stride_in_bytes = sizeof(float) * NDI_audio_frame.no_samples;
 
-		int nRes = m_stResample.ProcessAudioToFLT(pAudio->getSampleCount(),
-			(unsigned char*)pAudio->getRaw(),
-			NDI_audio_frame.no_channels,
-			(unsigned char*)NDI_audio_frame.p_data);
+		//int nRes = m_stResample.ProcessAudioToFLT(pAudio->getSampleCount(),
+		//	(unsigned char*)pAudio->getRaw(),
+		//	NDI_audio_frame.no_channels,
+		//	(unsigned char*)NDI_audio_frame.p_data);
 	}
 
 	NDIlib_send_send_audio_v2(m_pNDI_send, &NDI_audio_frame);
@@ -140,6 +141,6 @@ void CFrameConsumerNDI::sentToNDI()
 
 	++nLoopTimes;
 
-	if (m_sendNum++ % 3000 == 0)
-		printf("CFrameConsumerNDI::sentToNDI (%I64d) \n", m_sendNum);
+	//if (m_sendNum++ % 3000 == 0)
+		printf("CFrameConsumerNDI::sentToNDI (%I64d) \n", ++m_sendNum);
 }

@@ -155,7 +155,7 @@ public:
 	const int&							getVideoWidth() const override;
 	const int&							getVideoHeight() const override;
 	const bool&							isHighQualityThumbnail() const override;
-	const uint32_t&						getAudioSampleCount() const override;
+	uint32_t							getAudioSampleCount()  override;
 	const bool&							isDMAPlayout() const override;
 	bool								isBMR() const override;
 	bool								isVibox() const override;

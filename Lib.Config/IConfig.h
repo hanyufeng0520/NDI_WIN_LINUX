@@ -192,7 +192,7 @@ public:
 	virtual const int&                          getVideoWidth() const = 0;
 	virtual const int&                          getVideoHeight() const = 0;
 	virtual const bool&							isHighQualityThumbnail() const = 0;
-	virtual const uint32_t&                     getAudioSampleCount() const = 0;
+	virtual uint32_t							getAudioSampleCount() = 0;
 	virtual const bool&							isDMAPlayout() const = 0;
 	virtual bool								isBMR() const = 0;
 	virtual bool								isVibox() const = 0;

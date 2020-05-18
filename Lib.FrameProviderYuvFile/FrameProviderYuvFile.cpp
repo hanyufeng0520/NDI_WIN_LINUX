@@ -45,7 +45,6 @@ int CFrameProviderYuvFile::initAudio(const sFrameProvider_Parameter& pCnlParamet
 			Config->getVideoFormatString().c_str());
 		return -3;
 	}
-
 	return 0;
 }
 
@@ -90,7 +89,10 @@ int CFrameProviderYuvFile::addChannel(uint32_t dwCnlID, const sFrameProvider_Par
 	//
 #endif
 	if (initVideo(pCnlParameter) != 0)
+	{
+		printf("initVideo failed\n ");
 		return -1;
+	}	
 
 	initAudio(pCnlParameter);
 
@@ -98,6 +100,7 @@ int CFrameProviderYuvFile::addChannel(uint32_t dwCnlID, const sFrameProvider_Par
 	m_dwTimes = 0;
 	m_threadHandle = async_thread(thread_priority::normal, &CFrameProviderYuvFile::SendOneVideoFrm, this);
 	m_threadCallBack = async_thread(thread_priority::normal, &CFrameProviderYuvFile::callBack, this);
+	printf("CFrameProviderYuvFile::addChannel Okay\n ");
 	m_initDone = true;
 	return 0;
 }
@@ -120,6 +123,7 @@ int CFrameProviderYuvFile::startCapture()
 
 void CFrameProviderYuvFile::callBack()
 {
+	int loop = 0;
 	while (!m_bStop)
 	{
 		if (m_queueFrame.size() < 10)//because we only have 15 for each cam
@@ -129,7 +133,7 @@ void CFrameProviderYuvFile::callBack()
 
 			pVFrame pFrame = nullptr;
 			pAframe aFrame = nullptr;
-
+			
 			if (buildFrame(pFrame, aFrame) == 0)
 			{
 				m_locker.lock();
@@ -141,15 +145,17 @@ void CFrameProviderYuvFile::callBack()
 			Sleep(1);
 #else
 			sleep(1);
-#endif 
-		
+#endif 		
 		}
+
 		else
 #ifdef _MSC_VER
 			Sleep(5);
 #else
 			sleep(5);
 #endif 
+		++loop;
+		printf("loop:%d \n", loop);
 	}
 }
 
@@ -164,23 +170,29 @@ void CFrameProviderYuvFile::CloseVideoFile()
 
 int CFrameProviderYuvFile::buildFrame(pVFrame& _uncompFrame, pAframe& _aFrame)
 {
+	printf("buildFrame--->\n");
+
 	if (!m_initDone)
 		return -1;
 
-	_uncompFrame = nullptr;
-	_aFrame = nullptr;
+	_uncompFrame = std::make_shared<VideoFrame>();//JKL_NEEDTODO
+	_aFrame = std::make_shared<AudioFrame>();//JKL_NEEDTODO
+	_uncompFrame->init(m_stCnlParameter.fpVideoFormat, VideoColorSpace::CC_422_UYVY);//JKL_NEEDTODO
 
-	CapturePoolMgr::GetInstance()->getNew(_uncompFrame);
-	CapturePoolMgr::GetInstance()->getNew(_aFrame);
+	//CapturePoolMgr::GetInstance()->getNew(_uncompFrame);//JKL_NEEDTODO
+	//CapturePoolMgr::GetInstance()->getNew(_aFrame);//JKL_NEEDTODO
 
 	if (!_uncompFrame || !_aFrame)
+	{
+		printf("buildFrame getNew failed--->\n");
 		return -2;
-
+	}
+	
 	loadAudioFrameFromDisk(_aFrame);
 	int nRet = loadVideoFrameFromDisk(_uncompFrame);
 
-	++m_dwTimes;
-
+	printf("buildFrame---Okay--->\n");
+	++m_dwTimes;	
 	return nRet;
 }
 
@@ -189,7 +201,7 @@ int	CFrameProviderYuvFile::loadAudioFrameFromDisk(pAframe& _aFrame)
 	int nCurSampleCnt = m_dwCycleValue[m_dwTimes % m_maxAudioSample];
 	_aFrame->SetSampleCnt(nCurSampleCnt);
 	_aFrame->SetMonoCnt(16);
-	m_audioReader.getAudioFrame(_aFrame);
+	//m_audioReader.getAudioFrame(_aFrame);//JKL_NEEDTODO
 
 	_aFrame->SetFrameID(m_dwTimes);
 
@@ -198,6 +210,7 @@ int	CFrameProviderYuvFile::loadAudioFrameFromDisk(pAframe& _aFrame)
 
 int	CFrameProviderYuvFile::loadVideoFrameFromDisk(pVFrame& _uncompFrame)
 {
+#ifdef _MSC_VER
 	cpuFreq freq;
 	getCPUfreq(freq);
 
@@ -205,7 +218,8 @@ int	CFrameProviderYuvFile::loadVideoFrameFromDisk(pVFrame& _uncompFrame)
 	getTickCount(tickNow);
 
 	_uncompFrame->setFrameTime(tickNow / (freq / 1000));
-
+#else
+#endif
 	if (_uncompFrame->loadFromFile(m_fpVideo) != 0)
 	{
 		printf("Failed to load frame. Loop\n");
@@ -262,6 +276,7 @@ void CFrameProviderYuvFile::SendOneVideoFrm()
 			if (m_pGetFrameCB != nullptr && _uncompFrame != nullptr && _aFrame != nullptr)
 			{
 				--m_frameConsumed;
+				printf("cb--->\n");
 				m_pGetFrameCB->cb(m_dwCnlID, _uncompFrame, nullptr, nullptr, _aFrame);
 			}
 #ifdef _MSC_VER

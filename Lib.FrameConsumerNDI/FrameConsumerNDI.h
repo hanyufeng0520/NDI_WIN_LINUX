@@ -23,7 +23,7 @@ class CFrameConsumerNDI :public IFrameConsumerChannel
 	async_future					        m_sendNDIThreadHandle;
 	bool							        m_bExit = false;
 	NDIlib_send_instance_t			        m_pNDI_send = nullptr;
-	CAudioProcess						    m_stResample;
+	//CAudioProcess						    m_stResample;
 
 	void sendNDIThread();
 	void sentToNDI();
