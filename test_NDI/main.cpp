@@ -2,7 +2,7 @@
 #include "../Lib.FrameProviderYuvFile/FrameProviderYuvFile.h"
 #include "../Lib.FrameConsumerNDI/FrameConsumerNDI.h"
 #include "../Lib.Base/CapturePoolMgr.h"
-#include "../lib.Config/IConfig.h"
+#include "../Lib.Config/IConfig.h"
 
 #ifdef _MSC_VER
 #pragma comment(lib, "wbemuuid.lib")
@@ -39,9 +39,16 @@ int Cnl::init(int _cnlId, const char* _audioFileName, const char* _videoFileName
 	printf("Init %s %s %s\n", _audioFileName, _videoFileName, _cnlName);
 	sFrameProvider_Parameter paramProvid;
 	paramProvid.fpVideoFormat = Config->getVideoFormat();
+#ifdef _MSC_VER
 	sprintf_s(paramProvid.szFileName, sizeof(paramProvid.szFileName), _videoFileName);
 	sprintf_s(paramProvid.szFileNameAudio, sizeof(paramProvid.szFileNameAudio), _audioFileName);
-	sprintf_s(m_NDI_name, _cnlName);
+	sprintf_s(m_NDI_name, sizeof(m_NDI_name), _cnlName);
+#else
+	sprintf(paramProvid.szFileName, _videoFileName);
+	sprintf(paramProvid.szFileNameAudio, _audioFileName);
+	sprintf(m_NDI_name, _cnlName);
+#endif 
+
 	m_cnlId = _cnlId;
 	m_provider.addChannel(m_cnlId, paramProvid, this);
 
@@ -57,7 +64,11 @@ int Cnl::init(int _cnlId, const char* _audioFileName, const char* _videoFileName
 void Cnl::cb(uint32_t _channelID, pVFrame pFrameVideo, pCVframe pFrameVideo960, pCVframe pFrameVideo480, pAframe pFrameAudio)
 {
 	while (m_consumer.OutputFrames(_channelID, pFrameVideo, pFrameAudio, nullptr, m_FramesDropped))
+#ifdef _MSC_VER
 		Sleep(1);
+#else
+		sleep(1);
+#endif 
 	m_provider.frameConsumed();
 }
 
@@ -79,7 +90,7 @@ int Cnl::stop()
 
 int main()
 {
-	CapturePoolMgr * pCapturePoolMgr = CapturePoolMgr::GetInstance();
+	CapturePoolMgr* pCapturePoolMgr = CapturePoolMgr::GetInstance();
 	pCapturePoolMgr->initialize(Config->getVideoFormat(), 200, 200, false);
 
 	const Card_Config& pCardConfig = Config->getCardConfig();
@@ -87,14 +98,18 @@ int main()
 	if (Config->is4K())
 		nCnl = 1;
 
-	Cnl * cnl = new Cnl[nCnl];
+	Cnl* cnl = new Cnl[nCnl];
 
 	for (int i = 0; i < nCnl; i++)
 	{
 		if (pCardConfig.recorder[CamID(i)].providerType == FrameProviderType::FPT_YUV_FILE)
 		{
 			char NDI_name[50];
-			sprintf_s(NDI_name, "Cam%c", 'A' + i);
+#ifdef _MSC_VER
+			sprintf_s(NDI_name, sizeof(NDI_name), "Cam%c", 'A' + i);
+#else
+			sprintf(NDI_name, "Cam%c", 'A' + i);
+#endif 
 			cnl[i].init(i, pCardConfig.recorder[CamID(i)].szAudioName, pCardConfig.recorder[CamID(i)].szItemName, NDI_name);
 		}
 	}

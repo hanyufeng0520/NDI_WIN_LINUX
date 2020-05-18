@@ -18,7 +18,7 @@ endif()
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/inc/ffmpeg ${PROJECT_SOURCE_DIR}/inc/NDI)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
 
-aux_source_directory(. DIR_SRCS)
+aux_source_directory(./test_NDI DIR_SRCS)
 
 
 add_subdirectory(Lib.Base)
