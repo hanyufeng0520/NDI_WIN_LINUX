@@ -98,8 +98,8 @@ int Cnl::stop()
 
 int main()
 {
-	//CapturePoolMgr* pCapturePoolMgr = CapturePoolMgr::GetInstance();//JKL_NEEDTODO
-	//pCapturePoolMgr->initialize(Config->getVideoFormat(), 40, 40, false);//JKL_NEEDTODO
+	CapturePoolMgr* pCapturePoolMgr = CapturePoolMgr::GetInstance();
+	pCapturePoolMgr->initialize(Config->getVideoFormat(), 40, 40, false);
 	const Card_Config& pCardConfig = Config->getCardConfig();
 	uint32_t nCnl = 1;
 	if (Config->is4K())

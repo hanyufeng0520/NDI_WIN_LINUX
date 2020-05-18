@@ -175,12 +175,12 @@ int CFrameProviderYuvFile::buildFrame(pVFrame& _uncompFrame, pAframe& _aFrame)
 	if (!m_initDone)
 		return -1;
 
-	_uncompFrame = std::make_shared<VideoFrame>();//JKL_NEEDTODO
-	_aFrame = std::make_shared<AudioFrame>();//JKL_NEEDTODO
-	_uncompFrame->init(m_stCnlParameter.fpVideoFormat, VideoColorSpace::CC_422_UYVY);//JKL_NEEDTODO
+	//_uncompFrame = std::make_shared<VideoFrame>();//JKL_NEEDTODO
+	//_aFrame = std::make_shared<AudioFrame>();//JKL_NEEDTODO
+	//_uncompFrame->init(m_stCnlParameter.fpVideoFormat, VideoColorSpace::CC_422_UYVY);//JKL_NEEDTODO
 
-	//CapturePoolMgr::GetInstance()->getNew(_uncompFrame);//JKL_NEEDTODO
-	//CapturePoolMgr::GetInstance()->getNew(_aFrame);//JKL_NEEDTODO
+	CapturePoolMgr::GetInstance()->getNew(_uncompFrame);
+	CapturePoolMgr::GetInstance()->getNew(_aFrame);
 
 	if (!_uncompFrame || !_aFrame)
 	{
