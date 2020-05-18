@@ -15,18 +15,17 @@
 #include <algorithm>
 #include "../Lib.Base/AudioSampleHeader.h"
 
-static constexpr char const* BACKEND_CONFIG = "C:\\ProgramData\\SimplyLive.TV\\Vibox\\Backend\\Config.ini";
+//static constexpr char const* BACKEND_CONFIG = "C:\\ProgramData\\SimplyLive.TV\\Vibox\\Backend\\Config.ini";
 
 Configurator::Configurator()
 {
 	setDefault();
-#ifdef _MSC_VER
-	sprintf_s(m_strConfigPath, "%s", BACKEND_CONFIG);
-#else
 	char buf[MAX_PATH];
 	memset(buf, 0, sizeof(buf));
-	GetCurrentPath(buf, "Config.ini");
-	strcpy(m_strConfigPath, buf);
+	GetCurrentPath(buf, (char *)"Config.ini");
+#ifdef _MSC_VER
+	strcpy_s(m_strConfigPath, buf);
+#else
 #endif _MSC_VER
 	load();
 }
