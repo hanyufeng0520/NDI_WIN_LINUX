@@ -2,8 +2,7 @@
 #include "../Lib.Base/platform.h"
 #include <memory>
 #include "WaveHeader.h"
-
-class AudioFrame;
+#include "../Lib.Base/audioFrame.h"
 
 class CWaveReader
 {
@@ -25,5 +24,5 @@ public:
 	~CWaveReader();
 	bool open(const char *file_name, wchar_t*szLogFile);
 	void close();
-	bool getAudioFrame(std::shared_ptr<AudioFrame>& _aFrame);
+	bool getAudioFrame(pAframe& _aFrame);
 };

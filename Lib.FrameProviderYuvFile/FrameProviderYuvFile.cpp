@@ -170,14 +170,8 @@ void CFrameProviderYuvFile::CloseVideoFile()
 
 int CFrameProviderYuvFile::buildFrame(pVFrame& _uncompFrame, pAframe& _aFrame)
 {
-	printf("buildFrame--->\n");
-
 	if (!m_initDone)
 		return -1;
-
-	//_uncompFrame = std::make_shared<VideoFrame>();//JKL_NEEDTODO
-	//_aFrame = std::make_shared<AudioFrame>();//JKL_NEEDTODO
-	//_uncompFrame->init(m_stCnlParameter.fpVideoFormat, VideoColorSpace::CC_422_UYVY);//JKL_NEEDTODO
 
 	CapturePoolMgr::GetInstance()->getNew(_uncompFrame);
 	CapturePoolMgr::GetInstance()->getNew(_aFrame);
@@ -191,7 +185,6 @@ int CFrameProviderYuvFile::buildFrame(pVFrame& _uncompFrame, pAframe& _aFrame)
 	loadAudioFrameFromDisk(_aFrame);
 	int nRet = loadVideoFrameFromDisk(_uncompFrame);
 
-	printf("buildFrame---Okay--->\n");
 	++m_dwTimes;	
 	return nRet;
 }
@@ -201,8 +194,7 @@ int	CFrameProviderYuvFile::loadAudioFrameFromDisk(pAframe& _aFrame)
 	int nCurSampleCnt = m_dwCycleValue[m_dwTimes % m_maxAudioSample];
 	_aFrame->SetSampleCnt(nCurSampleCnt);
 	_aFrame->SetMonoCnt(16);
-	//m_audioReader.getAudioFrame(_aFrame);//JKL_NEEDTODO
-
+	m_audioReader.getAudioFrame(_aFrame);//JKL_NEEDTODO
 	_aFrame->SetFrameID(m_dwTimes);
 
 	return 0;
