@@ -119,9 +119,9 @@ void CFrameConsumerNDI::sentToNDI()
 	else
 	{
 
-		NDI_audio_frame.no_samples = nMaxSamples;
-		memset(NDI_audio_frame.p_data, 0, nMaxSamples * NDI_audio_frame.no_channels * sizeof(float));
-		/*
+		//NDI_audio_frame.no_samples = nMaxSamples;
+		//memset(NDI_audio_frame.p_data, 0, nMaxSamples * NDI_audio_frame.no_channels * sizeof(float));
+
 		//NEEDTOADD
 		NDI_audio_frame.no_channels = pAudio->GetMonoCnt();
 		NDI_audio_frame.no_samples = pAudio->getSampleCount();
@@ -131,7 +131,6 @@ void CFrameConsumerNDI::sentToNDI()
 			(unsigned char*)pAudio->getRaw(),
 			NDI_audio_frame.no_channels,
 			(unsigned char*)NDI_audio_frame.p_data);
-		*/
 	}
 
 	NDIlib_send_send_audio_v2(m_pNDI_send, &NDI_audio_frame);

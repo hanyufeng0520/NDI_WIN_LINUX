@@ -245,8 +245,6 @@ int CWaveReader::fillBufferFromDisk(int _sampleCount)
 
 bool CWaveReader::getAudioFrame(pAframe& _aFrame)
 {
-	//we have issue here.JKL_NEEDTOADD
-	//return true;
 	_aFrame->setToMute();
 
 	if (nullptr == m_wavInfo.fp)
