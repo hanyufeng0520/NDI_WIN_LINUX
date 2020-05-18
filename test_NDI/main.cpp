@@ -69,7 +69,6 @@ int Cnl::init(int _cnlId, const char* _audioFileName, const char* _videoFileName
 
 void Cnl::cb(uint32_t _channelID, pVFrame pFrameVideo, pCVframe pFrameVideo960, pCVframe pFrameVideo480, pAframe pFrameAudio)
 {
-
 	while (m_consumer->OutputFrames(_channelID, pFrameVideo, pFrameAudio, nullptr, m_FramesDropped))
 #ifdef _MSC_VER
 		Sleep(1);

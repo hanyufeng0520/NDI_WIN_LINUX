@@ -246,7 +246,7 @@ int CWaveReader::fillBufferFromDisk(int _sampleCount)
 bool CWaveReader::getAudioFrame(pAframe& _aFrame)
 {
 	//we have issue here.JKL_NEEDTOADD
-	return true;
+	//return true;
 	_aFrame->setToMute();
 
 	if (nullptr == m_wavInfo.fp)
@@ -259,12 +259,11 @@ bool CWaveReader::getAudioFrame(pAframe& _aFrame)
 	if (fillBufferFromDisk(sampleCount))
 		return false;
 
-	long  * pDest32 = (long*)_aFrame->getRaw();
+	int32_t  * pDest32 = (int32_t*)_aFrame->getRaw();
 	short * pDest16 = (short*)_aFrame->getRaw();
-	long  * pSource32 = (long*)m_pRawWave;
+	int32_t* pSource32 = (int32_t*)m_pRawWave;
 	short * pSource16 = (short*)m_pRawWave;
 	unsigned char * pSource8 = (unsigned char*)m_pRawWave;
-
 	for (int i = 0; i < sampleCount; i++)
 	{
 		for (int cnl = 0; cnl < nbChannel; cnl++)
@@ -297,14 +296,14 @@ bool CWaveReader::getAudioFrame(pAframe& _aFrame)
 				else if (m_wavInfo.format.BitsPerSample == 32)
 				{
 					if (nbBitPerSample == 32)
-						*pDest32++ = *pSource32++;
+						*pDest32++ = *pSource32++;				
 					else
 						*pDest16++ = (*pSource32++) / (256 * 256);
 				}
 			}
 			else
 				if (nbBitPerSample == 32)			// set to  mute
-					*pDest32++ = 0;	
+					*pDest32++ = 0;
 				else
 					*pDest16++ = 0;	
 		}
