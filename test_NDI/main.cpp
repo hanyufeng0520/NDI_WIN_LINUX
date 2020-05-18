@@ -15,7 +15,7 @@
 class Cnl : public IFPInputCallBack
 {
 	CFrameProviderYuvFile	*m_provider;
-	//CFrameConsumerNDI* m_consumer;
+	CFrameConsumerNDI* m_consumer;
 	int m_cnlId = -1;
 	uint32_t				m_FramesDropped = 0;
 	char					m_NDI_name[50];
@@ -34,11 +34,11 @@ public:
 Cnl::Cnl()
 {
 	m_provider = new CFrameProviderYuvFile;
-	//m_consumer = new CFrameConsumerNDI();
+	m_consumer = new CFrameConsumerNDI();
 }
 Cnl::~Cnl()
 {
-	//delete m_consumer;
+	delete m_consumer;
 	delete m_provider;
 }
 int Cnl::init(int _cnlId, const char* _audioFileName, const char* _videoFileName, const char* _cnlName)
@@ -62,21 +62,20 @@ int Cnl::init(int _cnlId, const char* _audioFileName, const char* _videoFileName
 	paramConsum.fcType = FCT_NDI;
 	paramConsum.fpVideoFormat = Config->getVideoFormat();
 	paramConsum.name = _cnlName;
-	//m_consumer->addChannel(m_cnlId, paramConsum);
+	m_consumer->addChannel(m_cnlId, paramConsum);
 
 	return 0;
 }
 
 void Cnl::cb(uint32_t _channelID, pVFrame pFrameVideo, pCVframe pFrameVideo960, pCVframe pFrameVideo480, pAframe pFrameAudio)
 {
-	/*
+
 	while (m_consumer->OutputFrames(_channelID, pFrameVideo, pFrameAudio, nullptr, m_FramesDropped))
 #ifdef _MSC_VER
 		Sleep(1);
 #else
-		sleep(1);
+		usleep(1000);
 #endif
-*/
 	m_provider->frameConsumed();
 }
 
@@ -92,7 +91,7 @@ int Cnl::start()
 
 int Cnl::stop()
 {
-	//m_consumer->stopChannel(m_cnlId);
+	m_consumer->stopChannel(m_cnlId);
 	return m_provider->removeChannel(m_cnlId);
 }
 

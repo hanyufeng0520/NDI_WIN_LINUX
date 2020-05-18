@@ -5,7 +5,7 @@
 CFrameConsumerNDI::CFrameConsumerNDI()
 {
 	m_pNDI_send = nullptr;
-	//m_stResample.Initialize();
+	m_stResample.Initialize();
 	NDI_video_frame.FourCC = NDIlib_FourCC_type_UYVY;
 	NDI_video_frame.picture_aspect_ratio = 16.0f / 9.0f;
 	NDI_video_frame.timecode = NDIlib_send_timecode_synthesize;
@@ -40,6 +40,7 @@ int CFrameConsumerNDI::addChannel(uint32_t dwCnlID, const sFrameConsumer_Paramet
 	NDI_video_frame.frame_rate_N = Config->getFrameRateNum();
 	NDI_video_frame.frame_rate_D = Config->getFrameRateDen();
 	NDI_video_frame.frame_format_type = Config->isProgressive() ? NDIlib_frame_format_type_progressive : NDIlib_frame_format_type_interleaved,			// This is not a progressive frame
+	NDI_audio_frame.no_channels = 16;
 	NDI_audio_frame.no_samples = Config->getAudioSampleCount(); // Will be changed on the fly
 	NDI_audio_frame.channel_stride_in_bytes = sizeof(float) * Config->getAudioSampleCount();
 	NDI_audio_frame.p_data = (float*)malloc(NDI_audio_frame.channel_stride_in_bytes * NDI_audio_frame.no_channels);
@@ -65,14 +66,17 @@ int CFrameConsumerNDI::addChannel(uint32_t dwCnlID, const sFrameConsumer_Paramet
 
 int CFrameConsumerNDI::OutputFrames(uint32_t nChannelID, pVFrame pVideo, pAframe pAudio, Timecode *tc, uint32_t &dwFramesDropped)
 {
-	return 0;
 	if (m_listV.size() > FRAME_BUFFER_SIZE)
 		return 1;
 	m_listV.emplace_back(pVideo);
 	m_listA.emplace_back(pAudio);
 	m_SemaphoreClock.raiseEvent();
 	//if (m_outNum++ % 3000 == 0)
+#ifdef _MSC_VER
 	printf("CFrameConsumerNDI::OutputFrames (%I64d) \n", ++m_outNum);
+#else
+	printf("CFrameConsumerNDI::OutputFrames (%llu) \n", ++m_outNum);
+#endif _MSC_VER
 	return 0;
 }
 
@@ -114,14 +118,20 @@ void CFrameConsumerNDI::sentToNDI()
 	}
 	else
 	{
+
+		NDI_audio_frame.no_samples = nMaxSamples;
+		memset(NDI_audio_frame.p_data, 0, nMaxSamples * NDI_audio_frame.no_channels * sizeof(float));
+		/*
+		//NEEDTOADD
 		NDI_audio_frame.no_channels = pAudio->GetMonoCnt();
 		NDI_audio_frame.no_samples = pAudio->getSampleCount();
 		NDI_audio_frame.channel_stride_in_bytes = sizeof(float) * NDI_audio_frame.no_samples;
 
-		//int nRes = m_stResample.ProcessAudioToFLT(pAudio->getSampleCount(),
-		//	(unsigned char*)pAudio->getRaw(),
-		//	NDI_audio_frame.no_channels,
-		//	(unsigned char*)NDI_audio_frame.p_data);
+		int nRes = m_stResample.ProcessAudioToFLT(pAudio->getSampleCount(),
+			(unsigned char*)pAudio->getRaw(),
+			NDI_audio_frame.no_channels,
+			(unsigned char*)NDI_audio_frame.p_data);
+		*/
 	}
 
 	NDIlib_send_send_audio_v2(m_pNDI_send, &NDI_audio_frame);
@@ -142,5 +152,9 @@ void CFrameConsumerNDI::sentToNDI()
 	++nLoopTimes;
 
 	//if (m_sendNum++ % 3000 == 0)
-		printf("CFrameConsumerNDI::sentToNDI (%I64d) \n", ++m_sendNum);
+#ifdef _MSC_VER
+	printf("CFrameConsumerNDI::sentToNDI (%I64d) \n", ++m_sendNum);
+#else
+	printf("CFrameConsumerNDI::sentToNDI (%llu) \n", ++m_sendNum);
+#endif _MSC_VER
 }

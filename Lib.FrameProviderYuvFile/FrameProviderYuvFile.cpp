@@ -123,7 +123,6 @@ int CFrameProviderYuvFile::startCapture()
 
 void CFrameProviderYuvFile::callBack()
 {
-	int loop = 0;
 	while (!m_bStop)
 	{
 		if (m_queueFrame.size() < 10)//because we only have 15 for each cam
@@ -144,7 +143,7 @@ void CFrameProviderYuvFile::callBack()
 #ifdef _MSC_VER
 			Sleep(1);
 #else
-			sleep(1);
+			usleep(1000);
 #endif 		
 		}
 
@@ -152,10 +151,8 @@ void CFrameProviderYuvFile::callBack()
 #ifdef _MSC_VER
 			Sleep(5);
 #else
-			sleep(5);
+			usleep(5000);
 #endif 
-		++loop;
-		printf("loop:%d \n", loop);
 	}
 }
 
@@ -194,7 +191,7 @@ int	CFrameProviderYuvFile::loadAudioFrameFromDisk(pAframe& _aFrame)
 	int nCurSampleCnt = m_dwCycleValue[m_dwTimes % m_maxAudioSample];
 	_aFrame->SetSampleCnt(nCurSampleCnt);
 	_aFrame->SetMonoCnt(16);
-	m_audioReader.getAudioFrame(_aFrame);//JKL_NEEDTODO
+	m_audioReader.getAudioFrame(_aFrame);
 	_aFrame->SetFrameID(m_dwTimes);
 
 	return 0;
@@ -274,14 +271,14 @@ void CFrameProviderYuvFile::SendOneVideoFrm()
 #ifdef _MSC_VER
 			Sleep(5);
 #else
-			sleep(5);
+			usleep(5000);
 #endif 
 		}
 		else
 #ifdef _MSC_VER
 			Sleep(5);
 #else
-			sleep(5);
+			usleep(5000);
 #endif 
 	}
 }
