@@ -211,8 +211,7 @@ int	CFrameProviderYuvFile::loadVideoFrameFromDisk(pVFrame& _uncompFrame)
 #endif
 	if (_uncompFrame->loadFromFile(m_fpVideo) != 0)
 	{
-		printf("Failed to load frame. Loop\n");
-
+		//printf("Failed to load frame. Loop\n");
 #ifdef _MSC_VER
 		_fseeki64(m_fpVideo, 0, SEEK_SET);
 #else
@@ -265,7 +264,6 @@ void CFrameProviderYuvFile::SendOneVideoFrm()
 			if (m_pGetFrameCB != nullptr && _uncompFrame != nullptr && _aFrame != nullptr)
 			{
 				--m_frameConsumed;
-				printf("cb--->\n");
 				m_pGetFrameCB->cb(m_dwCnlID, _uncompFrame, nullptr, nullptr, _aFrame);
 			}
 #ifdef _MSC_VER

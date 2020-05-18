@@ -71,11 +71,11 @@ int CFrameConsumerNDI::OutputFrames(uint32_t nChannelID, pVFrame pVideo, pAframe
 	m_listV.emplace_back(pVideo);
 	m_listA.emplace_back(pAudio);
 	m_SemaphoreClock.raiseEvent();
-	//if (m_outNum++ % 3000 == 0)
+	if (m_outNum++ % 3000 == 0)
 #ifdef _MSC_VER
-	printf("CFrameConsumerNDI::OutputFrames (%I64d) \n", ++m_outNum);
+	printf("CFrameConsumerNDI::OutputFrames (%I64d) \n", m_outNum);
 #else
-	printf("CFrameConsumerNDI::OutputFrames (%llu) \n", ++m_outNum);
+	printf("CFrameConsumerNDI::OutputFrames (%llu) \n", m_outNum);
 #endif _MSC_VER
 	return 0;
 }
@@ -147,14 +147,18 @@ void CFrameConsumerNDI::sentToNDI()
 	float timeCostV = timerV.elapse_ms();
 	float timeCost = timer.elapse_ms();
 	if (timeCost > (fInterval + 3))
+#ifdef _MSC_VER
 		printf("sentToNDI nLoop(%I64d) timeout %.2f ms A(%.2f ms) V(%.2f ms) \n",nLoopTimes, timeCost, timeCostA, timeCostV);
+#else
+		printf("sentToNDI nLoop(%llu) timeout %.2f ms A(%.2f ms) V(%.2f ms) \n", nLoopTimes, timeCost, timeCostA, timeCostV);
+#endif _MSC_VER
 
 	++nLoopTimes;
 
-	//if (m_sendNum++ % 3000 == 0)
+	if (m_sendNum++ % 100 == 0)
 #ifdef _MSC_VER
-	printf("CFrameConsumerNDI::sentToNDI (%I64d) \n", ++m_sendNum);
+	printf("CFrameConsumerNDI::sentToNDI (%I64d) \n", m_sendNum);
 #else
-	printf("CFrameConsumerNDI::sentToNDI (%llu) \n", ++m_sendNum);
+	printf("CFrameConsumerNDI::sentToNDI (%llu) \n", m_sendNum);
 #endif _MSC_VER
 }
