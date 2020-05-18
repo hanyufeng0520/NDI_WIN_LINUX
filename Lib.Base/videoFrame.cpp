@@ -1,3 +1,4 @@
+#include<string.h>
 #include "videoFrame.h"
 
 VideoFrame::VideoFrame()
@@ -57,7 +58,11 @@ int VideoFrame::setToBlack(bool _flagOnly)
 int	VideoFrame::saveToFile(const char* _fileName) const
 {
 	FILE* fp = nullptr;
-
+#ifdef _MSC_VER
+	fopen_s(&fp, _fileName, "wb");
+#else
+	#define fopen_s(pFile,filename,mode) ((*(pFile))=fopen((filename),  (mode)))==NULL
+#endif _MSC_VER
 	fopen_s(&fp, _fileName, "wb");
 	if (fp == nullptr)
 		return -1;

@@ -1,6 +1,10 @@
 #pragma once
-#include "../lib.Base/VideoFormatDef.h"
+#ifndef _MSC_VER
+#define MAX_PATH 260
+#endif 
+#include "../Lib.Base/VideoFormatDef.h"
 #include "IFPInputCallBack.h"
+
 
 struct sFrameProvider_Parameter
 {
@@ -23,8 +27,14 @@ struct sFrameProvider_Parameter
 			bAutoDetect = rhs.bAutoDetect;
 			dwBoardID = rhs.dwBoardID;
 			dwSdiID = rhs.dwSdiID;
+#ifdef _MSC_VER
 			memcpy_s(szFileName, MAX_PATH, rhs.szFileName, MAX_PATH);
 			memcpy_s(szFileNameAudio, MAX_PATH, rhs.szFileNameAudio, MAX_PATH);
+#else
+			memcpy(szFileName, rhs.szFileName, MAX_PATH);
+			memcpy(szFileNameAudio, rhs.szFileNameAudio, MAX_PATH);
+#endif _MSC_VER
+
 		}
 		return *this;
 	}

@@ -55,7 +55,7 @@ class Configurator :public IConfig
 	int						        m_frameRateDen = 1000;
 	int						        m_videoWidth = 1920;
 	int						        m_videoHeight = 1080;
-	uint32_t				        m_audioSampleCount = 0;
+	int								m_audioSampleCount = 0;
 	std::string				        m_cardTypeString;
 	std::string				        m_videoFormatString;
 	const char*				        m_serverTypeString = nullptr;
@@ -116,7 +116,7 @@ class Configurator :public IConfig
 	void prepareData();
 	int  setDefault();
 	size_t LoadLSMConfigValue(EM_Channel_Detail& recorder, CamID  nCameraIndex, char *pValue);
-	void loadPGM1NDIConfig();
+
 public:
 	Configurator();
 	virtual ~Configurator() = default;
@@ -231,4 +231,10 @@ public:
 	virtual int getNbRec_ALL() const override;
 	virtual int getNbRec_OnlyNetCams() const override;
 	virtual int getNbRec_OnlyLocalCams() const override;
+
+protected:
+	void GetCurrentPath(char buf[], char* filename);
+	void IniReadValue(char* section, char* key, char* val);
+	int  readStringValue(const char* section, char* key, char* val);
+	int  readIntValue(const char* section, char* key);
 };

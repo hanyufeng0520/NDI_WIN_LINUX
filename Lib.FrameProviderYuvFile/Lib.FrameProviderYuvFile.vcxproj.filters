@@ -24,9 +24,6 @@
     <ClInclude Include="WaveHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MarkerBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IFrameProviderChannel.h">
       <Filter>Header Files</Filter>
     </ClInclude>

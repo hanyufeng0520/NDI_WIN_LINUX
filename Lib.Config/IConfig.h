@@ -5,7 +5,7 @@
 #include "../Lib.Base/VideoFormatDef.h"
 #include <vector>
 
-#define NB_MAX_USER	(8)
+#define NB_MAX_USER	(1)
 #define Config (IConfig::getInstance())
 
 enum class LayerType

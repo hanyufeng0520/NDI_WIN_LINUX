@@ -1,14 +1,17 @@
 #include "WaveReader.h"
 #include <stdio.h>
+#ifdef _MSC_VER
 #include <mbstring.h>
+#else 
+#endif 
 #include <string.h>
 #include <stdlib.h>
-#include "../lib.Base/audioFrame.h"
+#include "../Lib.Base/audioFrame.h"
 
 CWaveReader::CWaveReader()
 {
 	m_wavInfo.fp = nullptr;
-	m_pRawWave = new BYTE[16 * 4 * 2000];
+	m_pRawWave = new unsigned char[16 * 4 * 2000];
 	memset(&m_wavInfo, 0, sizeof(m_wavInfo));
 }
 
@@ -17,9 +20,9 @@ CWaveReader::~CWaveReader()
 	close();
 }
 
-void CWaveReader::initLog(TCHAR* szLogFile)
+void CWaveReader::initLog(wchar_t* szLogFile)
 {
-	memcpy_s(m_szLogFile, MAX_PATH * sizeof(TCHAR), szLogFile, (_tcslen(szLogFile) + 1) * sizeof(TCHAR));
+	m_szLogFile = szLogFile;	
 }
 
 int CWaveReader::openFile(const char* _file_name)
@@ -29,7 +32,9 @@ int CWaveReader::openFile(const char* _file_name)
 		printf("CWaveReader::openFile Failed.File name is empty.\n");
 		return -1;
 	}
-
+#ifndef _MSC_VER
+#define fopen_s(pFile,filename,mode) ((*(pFile))=fopen((filename),  (mode)))==NULL
+#endif 
 	fopen_s(&m_wavInfo.fp, _file_name, "rb");
 	if (nullptr == m_wavInfo.fp)
 	{
@@ -50,7 +55,11 @@ int CWaveReader::checkFileHeader()
 		close();
 		return -1;
 	}
+#ifdef _MSC_VER
 	if (_mbsnicmp((unsigned char*)buffer, (unsigned char*)"RIFF", 4))
+#else 
+	if (strncasecmp((const char*)buffer, (const char*)"RIFF", 4))
+#endif	
 	{
 		printf("CWaveReader::openFile Failed.Read RIFF bytes.\n");
 		close();
@@ -59,7 +68,11 @@ int CWaveReader::checkFileHeader()
 
 	memcpy(m_wavInfo.riff.ChunkID, buffer, 4);
 	m_wavInfo.riff.ChunkSize = *(int*)(buffer + 4);
+#ifdef _MSC_VER
 	if (_mbsnicmp((unsigned char*)buffer + 8, (unsigned char*)"WAVE", 4))
+#else 
+	if (strncasecmp((const char*)buffer + 8, (const char*)"WAVE", 4))
+#endif	
 	{
 		printf("CWaveReader::openFile Failed.Read WAVE bytes.\n");
 		close();
@@ -89,14 +102,22 @@ int CWaveReader::getMarker(char(&_marker)[4], int& size)
 
 bool CWaveReader::isMarkerFMT(const char* _marker)
 {
+#ifdef _MSC_VER
 	if (0 == _mbsnicmp((unsigned char*)_marker, (unsigned char*)"FMT", 3))
+#else 
+	if (0 == strncasecmp((const char*)_marker, (const char*)"FMT", 3))
+#endif	
 		return true;
 	return false;
 }
 
 bool CWaveReader::isMarkerDATA(const char* _marker)
 {
+#ifdef _MSC_VER
 	if (0 == _mbsnicmp((unsigned char*)_marker, (unsigned char*)"DATA", 4))
+#else 
+	if (0 == strncasecmp((const char*)_marker, (const char*)"DATA", 4))
+#endif	
 		return true;
 	return false;
 }
@@ -135,7 +156,7 @@ int CWaveReader::readDATA(const char* _marker, int _markerSize, int& _offset)
 	return 0;
 }
 
-bool CWaveReader::open(const char * _file_name, TCHAR * _szLogFile)
+bool CWaveReader::open(const char * _file_name, wchar_t* _szLogFile)
 {
 	initLog(_szLogFile);
 	if (openFile(_file_name))
@@ -163,14 +184,24 @@ bool CWaveReader::open(const char * _file_name, TCHAR * _szLogFile)
 			break;
 		}
 		else
+#ifdef _MSC_VER
 			_fseeki64(m_wavInfo.fp, markerSize, SEEK_CUR);
+#else
+			fseeko64(m_wavInfo.fp, markerSize, SEEK_CUR);
+#endif 
 
 		offset += 8 + markerSize;
+		printf("markerSize :%d\n", markerSize);
+
 	}
 
 	if ((m_wavInfo.format.BitsPerSample == 16 || m_wavInfo.format.BitsPerSample == 24 || m_wavInfo.format.BitsPerSample == 32) && m_wavInfo.format.SampleRate == 48000)
 	{
+#ifdef _MSC_VER
 		_fseeki64(m_wavInfo.fp, m_wavInfo.data_offset, SEEK_SET);
+#else
+		fseeko64(m_wavInfo.fp, m_wavInfo.data_offset, SEEK_SET);
+#endif 
 		return true;
 	}
 
@@ -199,7 +230,11 @@ int CWaveReader::fillBufferFromDisk(int _sampleCount)
 	int nRes = (int)fread(m_pRawWave, 1, nReadSize, m_wavInfo.fp);
 	if (nRes != nReadSize)
 	{
+#ifdef _MSC_VER
 		_fseeki64(m_wavInfo.fp, m_wavInfo.data_offset, SEEK_SET);
+#else
+		fseeko64(m_wavInfo.fp, m_wavInfo.data_offset, SEEK_SET);
+#endif 
 		nRes = (int)fread(m_pRawWave, 1, nReadSize, m_wavInfo.fp);
 		if (nRes != nReadSize)
 			return -1;

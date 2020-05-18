@@ -1,6 +1,11 @@
 #pragma once
 #include <thread>
+
+#ifdef _MSC_VER
 #include <Windows.h>
+#else
+#endif _MSC_VER
+
 
 struct async_future
 {
@@ -36,6 +41,7 @@ async_future async_thread(thread_priority _priority, _Fty&& _Fnarg, _ArgTypes&&.
 	future.handle = new std::thread(std::forward<_Fty>(_Fnarg), std::forward<_ArgTypes>(_Args)...);
 	if (future.handle != nullptr)
 	{
+#ifdef _MSC_VER
 		int priority = THREAD_PRIORITY_NORMAL;
 		switch (_priority)
 		{
@@ -48,6 +54,9 @@ async_future async_thread(thread_priority _priority, _Fty&& _Fnarg, _ArgTypes&&.
 		default:							priority = THREAD_PRIORITY_NORMAL;		  break;
 		}
 		SetThreadPriority(future.handle->native_handle(), priority);
+#else
+
+#endif _MSC_VER
 	}
 	return future;
 }
@@ -57,6 +66,11 @@ async_future async_thread(thread_priority _priority, const wchar_t* _thread_name
 {
 	async_future future = async_thread(_priority, std::forward<_Fty>(_Fnarg), std::forward<_ArgTypes>(_Args)...);
 	if (future.handle != nullptr && _thread_name != nullptr)
+	{
+#ifdef _MSC_VER
 		SetThreadDescription(future.handle->native_handle(), _thread_name);
+#else
+#endif _MSC_VER
+	}
 	return future;
 }

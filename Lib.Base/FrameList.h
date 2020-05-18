@@ -91,12 +91,12 @@ public:
 		m_dataListSemaphore.raiseEvent();
 	}
 
-	bool wait_semaphore_data(int32_t _time_out = 50) const
+	bool wait_semaphore_data(int _time_out = 50)
 	{
 		return m_dataListSemaphore.waitEvent(_time_out);
 	}
 
-	bool wait_semaphore_empty(int32_t _time_out = 50) const
+	bool wait_semaphore_empty(int _time_out = 50)
 	{
 		return m_emptyListSemaphore.waitEvent(_time_out);
 	}

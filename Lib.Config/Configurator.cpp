@@ -1,17 +1,33 @@
 #include "Configurator.h"
-#include <tchar.h>
+#ifdef _MSC_VER
 #include <Windows.h>
+#else
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#endif _MSC_VER
 #include "cnlInfo.h"
 #include <filesystem>
-#include <io.h>
-#include "../Lib.Base/StringHelper.h"
-#include "../Lib.Base/CommonHelper.h"
-#include "AudioSampleHeader.h"
+#include <algorithm>
+#include "../Lib.Base/AudioSampleHeader.h"
+
+static constexpr char const* BACKEND_CONFIG = "C:\\ProgramData\\SimplyLive.TV\\Vibox\\Backend\\Config.ini";
 
 Configurator::Configurator()
 {
 	setDefault();
-	sprintf_s(m_strConfigPath, R"(%sConfig.ini)", GetAppPathA().c_str());
+#ifdef _MSC_VER
+	sprintf_s(m_strConfigPath, "%s", BACKEND_CONFIG);
+#else
+	char buf[MAX_PATH];
+	memset(buf, 0, sizeof(buf));
+	GetCurrentPath(buf, "Config.ini");
+	strcpy(m_strConfigPath, buf);
+#endif _MSC_VER
 	load();
 }
 
@@ -544,52 +560,7 @@ const char* Configurator::getNetworkServerMulticastBindIP()
 
 int Configurator::load()
 {
-	m_sendCmdToNetwork = GetPrivateProfileIntA("NetworkFunction", "SendCmdToNetwork", false, m_strConfigPath);
-	GetPrivateProfileStringA("NetworkFunction", "multicast_BindIP", "", m_networkServerMulticastBindIP, sizeof(m_networkServerMulticastBindIP), m_strConfigPath);
-	GetPrivateProfileStringA("NetworkFunction", "multicast_ip", "", m_networkServerMulticastIP, sizeof(m_networkServerMulticastIP), m_strConfigPath);
-	m_networkServerMulticastPort = uint16_t(GetPrivateProfileIntA("NetworkFunction", "multicast_port", 39100, m_strConfigPath));
-	std::string_view multicast_ip(m_networkServerMulticastIP);
-	if (!multicast_ip.empty())
-		m_NetWorkLiveGap = GetPrivateProfileIntA("NetworkFunction", "networkLiveGap", 0, m_strConfigPath);
-	
-	GetPrivateProfileStringA("GENERAL_CONFIG", "broadcast_dnx_ip", "", m_brocastDnxIP, sizeof(m_brocastDnxIP), m_strConfigPath);
-	
-	m_lowResFullsizeMbps = GetPrivateProfileIntA("BandwidthRegulation", "FullSizeMbps", 0, m_strConfigPath);
-	m_lowResQ4Mbps = GetPrivateProfileIntA("BandwidthRegulation", "Q4Mbps", 0, m_strConfigPath);
-	m_lowResQ16Mbps = GetPrivateProfileIntA("BandwidthRegulation", "Q16Mbps", 0, m_strConfigPath);
-
-	m_isHighQualityThumbnail = GetPrivateProfileIntA("GENERAL_CONFIG", "HighQualityThumbnail", false, m_strConfigPath);
-	m_SlowMotionMode = SlowMotionMode(GetPrivateProfileIntA("GENERAL_CONFIG", "SlowMotionMode", static_cast<int>(SlowMotionMode::SlowMotionMode_parity_violation), m_strConfigPath));
-	m_videoFormat = FPTVideoFormat(GetPrivateProfileIntA("GENERAL_CONFIG", "Video_Format", static_cast<int>(FPTVideoFormat::FP_FORMAT_1080i_5000), m_strConfigPath));
-	m_isFreeRun = GetPrivateProfileIntA("GENERAL_CONFIG", "Free_Run", true, m_strConfigPath);
-	m_recPGMDirty = GetPrivateProfileIntA("GENERAL_CONFIG", "WritePGMDirty", false, m_strConfigPath);
-	m_recPGMClean = GetPrivateProfileIntA("GENERAL_CONFIG", "WritePGMClean", false, m_strConfigPath);
-	m_workingMode = WorkingMode(GetPrivateProfileIntA("GENERAL_CONFIG", "Working_Mode", static_cast<int>(WorkingMode::WorkingMode_Vibox), m_strConfigPath));
-	m_useExternalTCFlag = GetPrivateProfileIntA("GENERAL_CONFIG", "External_TimeCode", false, m_strConfigPath);
-	m_liveTGAType = LiveTGAType(GetPrivateProfileIntA("GENERAL_CONFIG", "LiveTGA", static_cast<int>(LiveTGAType::LiveTGAType_OnTCP), m_strConfigPath));
-	GetPrivateProfileStringA("GENERAL_CONFIG", "LiveTGA_NDIChannelName", "", m_GfxNDIChannelName[0], sizeof(m_GfxNDIChannelName[0]), m_strConfigPath);
-	GetPrivateProfileStringA("GENERAL_CONFIG", "LiveTGA_NDIChannelName_2", "", m_GfxNDIChannelName[1], sizeof(m_GfxNDIChannelName[1]), m_strConfigPath);
-	if (m_liveTGAType == LiveTGAType::LiveTGAType_NDI && _strnicmp(m_GfxNDIChannelName[0], m_GfxNDIChannelName[1], max(strlen(m_GfxNDIChannelName[0]), strlen(m_GfxNDIChannelName[1]))) == 0)
-	{
-		memset(&m_GfxNDIChannelName[1], 0, sizeof(m_GfxNDIChannelName[1]));
-	}
-
-	GetPrivateProfileStringA("GENERAL_CONFIG", "AudioMixerName", "", m_AudioMixerName, sizeof(m_AudioMixerName), m_strConfigPath);
-	m_RGBColorModel = RGBColorModel(GetPrivateProfileIntA("GENERAL_CONFIG", "RGBColorModel", static_cast<int>(RGBColorModel::BT709), m_strConfigPath));
-
-	m_bFrameSenderIsUsingUdp = GetPrivateProfileIntA("GENERAL_CONFIG", "FrameSenderIsUsingUdp", 0, m_strConfigPath);
-	m_nFrameSenderUdpPacketSize = GetPrivateProfileIntA("GENERAL_CONFIG", "FrameSenderUdpPacketSize", 1400, m_strConfigPath);
-	if (m_nFrameSenderUdpPacketSize < 100)
-		m_nFrameSenderUdpPacketSize = 100;
-	m_nUdpStreamPerWait = GetPrivateProfileIntA("GENERAL_CONFIG", "udpstreamper_wait", 2, m_strConfigPath);
-	m_nDnxExportPerWait = GetPrivateProfileIntA("GENERAL_CONFIG", "dnxexportper_wait", 5, m_strConfigPath);
-
-	m_disableLiveToMixer = GetPrivateProfileIntA("GENERAL_CONFIG", "DisableLiveToMixer", false, m_strConfigPath);
-	m_delayPGMVideo = GetPrivateProfileIntA("GENERAL_CONFIG", "DelayPGMVideo", false, m_strConfigPath);
-
-	if (is4K())
-		m_enableUHD2SI = GetPrivateProfileIntA("GENERAL_CONFIG", "EnableUHD2SI", false, m_strConfigPath);
-
+	m_videoFormat = FPTVideoFormat(readIntValue("GENERAL_CONFIG", (char *)"Video_Format"));
 	m_cardType = CardType::CardType_LocalUYVYFile;
 	switch (m_cardType)
 	{
@@ -604,59 +575,37 @@ int Configurator::load()
 	case CardType::CardType_AJA:				m_defaultProviderType = FrameProviderType::FPT_AJA; break;
 	default:						m_defaultProviderType = FrameProviderType::FPT_YUV_FILE; break;
 	}	
+#ifdef _MSC_VER
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 	if (m_nEncodeXDCamCpu > si.dwNumberOfProcessors)
 		m_nEncodeXDCamCpu = si.dwNumberOfProcessors;
 	if (si.dwNumberOfProcessors > 12)
 		m_nbCoreReserved = 0;
-
-#ifdef NDEBUG
-	m_bAlwaysDisplayUI = GetPrivateProfileIntA("GENERAL", "Always_Display_UI", false, HARDWARE_CONFIG);			//never hide UI in debug mode
-#endif
-
-	char value[MAX_PATH];
-	GetPrivateProfileStringA("GENERAL_CONFIG", "4K_In_Level", "A", value, MAX_PATH, m_strConfigPath);
-	m_isInLevelA = (_strnicmp(value, "A", strlen("A")) == 0);
-
-	GetPrivateProfileStringA("GENERAL_CONFIG", "4K_Out_Level", "A", value, MAX_PATH, m_strConfigPath);
-	m_isOutLevelA = (_strnicmp(value, "A", strlen("A")) == 0);
+#else
+	m_nbCoreReserved = 0;
+#endif _MSC_VER
 
 	if (m_workingMode >= WorkingMode::WorkingMode_Max)
 		m_workingMode = WorkingMode::WorkingMode_Vibox;
 
-	CHAR strValue[MAX_PATH];
-	CHAR strItemName[MAX_PATH];
+	char strValue[MAX_PATH];
+	char strItemName[MAX_PATH];
 
 	m_nbSDIRec = 0;
 	m_nbStreamRec = 0;
-	m_layers[0] = LayerType::LayerType_Gfx1;
-	m_layers[1] = LayerType::LayerType_Gfx2;
-	m_layers[2] = LayerType::LayerType_Gfx3;
-	m_layers[3] = LayerType::LayerType_RTD;
-
-	for (int nCamera = 0; nCamera < static_cast<int>(LayerType::LayerType_Max); nCamera++)
-	{
-		sprintf_s(strItemName, "LAYER_%d", nCamera + 1);
-		GetPrivateProfileStringA("LAYERS", strItemName, "", strValue, MAX_PATH, m_strConfigPath);
-		if (_strnicmp(strValue, "RTD", 3) == 0)
-			m_layers[nCamera] = LayerType::LayerType_RTD;
-		else if (_strnicmp(strValue, "GFX1", 4) == 0)
-			m_layers[nCamera] = LayerType::LayerType_Gfx1;
-		else if (_strnicmp(strValue, "GFX2", 4) == 0)
-			m_layers[nCamera] = LayerType::LayerType_Gfx2;
-		else if (_strnicmp(strValue, "GFX3", 4) == 0)
-			m_layers[nCamera] = LayerType::LayerType_Gfx3;
-	}
-	m_isRTDonClean = GetPrivateProfileIntA("LAYERS", "RTD_ON_CLEAN", true, m_strConfigPath);
-
+	
 	ChannelMask gpuRecorder;
 	int nlocalCamIdx = 0;
 	m_nbRecNetCams = 0;
 	for (CamID nCamera = ID_Cam_0; nCamera < std::size(m_stConfig.recorder); nCamera = CamID(nCamera + 1))
 	{
+#ifdef _MSC_VER
 		sprintf_s(strItemName, "Cam%d", nCamera + 1);
-		GetPrivateProfileStringA("CAMERA_CONFIG", strItemName, "", strValue, MAX_PATH, m_strConfigPath);
+#else
+		sprintf(strItemName, "Cam%d", nCamera + 1);
+#endif 
+		readStringValue("CAMERA_CONFIG", strItemName, strValue);
 		std::string strTemp = strValue;
 
 		EM_Channel_Detail recorder;
@@ -665,8 +614,8 @@ int Configurator::load()
 		recorder.isNetworking = false;
 		size_t sRet = LoadLSMConfigValue(recorder, nCamera, strValue);
 
-		if (std::string::npos == sRet)break;// don't support config hole
-
+		if (std::string::npos == sRet)
+			break;// don't support config hole
 		if (!recorder.isNetworking)
 		{
 			std::string strItemValue(strValue);
@@ -704,18 +653,7 @@ int Configurator::load()
 	m_firstLocalSDICam = 0;
 	int sncount = 0;	
 
-	loadPGM1NDIConfig();
 	prepareData();
-
-	m_replayThumbnailResolution.set_value(ThumbnailResolutionType(GetPrivateProfileIntA("GENERAL_CONFIG", "ReplayThumbnailResolution", static_cast<int>(ThumbnailResolutionType::thumbnail_480x270), m_strConfigPath)),
-		m_videoWidth, m_videoHeight);
-	m_PGMPRVThumbnailResolution.set_value(ThumbnailResolutionType(GetPrivateProfileIntA("GENERAL_CONFIG", "PGMPRVThumbnailResolution", static_cast<int>(ThumbnailResolutionType::thumbnail_960x540), m_strConfigPath)),
-		m_videoWidth, m_videoHeight);
-
-	m_h264EncoderHardwareType = Encoder264_Hardware(GetPrivateProfileIntA("ENCODER_264", "encode_hardware", static_cast<int>(Encoder264_Hardware::hardware_GPU), m_strConfigPath));
-	m_h264OutConversion = EncoderOut_Conversion(GetPrivateProfileIntA("ENCODER_264", "conversion", static_cast<int>(EncoderOut_Conversion::conversion_NO), m_strConfigPath));
-	if (m_h264EncoderHardwareType == Encoder264_Hardware::hardware_CPU)
-		m_h264OutConversion = EncoderOut_Conversion::conversion_NO;
 
 	if (is4K())
 	{
@@ -748,12 +686,6 @@ int Configurator::load()
 	int activePlayMask = 0;
 	for (int nCamera = 0; nCamera < m_nMaxUser; nCamera++)
 		activePlayMask |= 1 << nCamera;
-	std::error_code error;
-	if (!std::filesystem::exists(m_strConfigPath, error))
-	{
-		printf_s("  config file not found\n");
-		return -1;
-	}
 	return 0;
 }
 
@@ -845,35 +777,6 @@ void Configurator::prepareData()
 	default: m_sendingThumbnailJump = 1; break;
 	}
 
-	MEMORYSTATUSEX statex;
-	statex.dwLength = sizeof(statex);
-	GlobalMemoryStatusEx(&statex);
-	uint64_t totalSystemMemGB = statex.ullTotalPhys / 1024 / 1024 / 1024;
-	switch (m_hardwareType)
-	{
-	case ServerType::Server_0cnl:		m_serverTypeString = "0 channel";	m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_8GB;  break;
-	case ServerType::Server_8cnl:		m_serverTypeString = "8 channels";	m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_64GB;  break;
-	case ServerType::Server_6cnl:       m_serverTypeString = "6 channels";	m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_32GB;  break;
-	case ServerType::Server_DemoNUC:    m_serverTypeString = "Demo NUC";	m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_64GB;  break;
-	case ServerType::Server_16cnl:		m_serverTypeString = "16 channels";	m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_64GB;  break;
-	case ServerType::Server_4K:         m_serverTypeString = "4K";			m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_128GB; break;
-	default:			    m_serverTypeString = "unknown";		m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_64GB;  break;
-	}
-
-	if (totalSystemMemGB < 48)
-	{
-		if (totalSystemMemGB < 30)
-			m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_8GB;
-		else
-			m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_32GB;
-		//WriteLogA(LOGPATH, LOGLEVEL::Warn, "BE is %s but only have %uGB memory, so change to 32GB memory config", m_serverTypeString, totalSystemMemGB);
-	}
-	else if (totalSystemMemGB < 85 && m_maxMemoryGBBaseOnServerType == MemoryBaseOnServerType::Memory_128GB)
-	{
-		m_maxMemoryGBBaseOnServerType = MemoryBaseOnServerType::Memory_64GB;
-		//WriteLogA(LOGPATH, LOGLEVEL::Warn, "BE is %s but only have %uGB memory, so change to 64GB memory config", m_serverTypeString, totalSystemMemGB);
-	}
-
 	m_videoWidth = FFMPEG_AUDIOSAMPLE::getFrameWidth(m_videoFormat);
 	m_videoHeight = FFMPEG_AUDIOSAMPLE::getFrameHeight(m_videoFormat);
 	m_isHD = (m_videoHeight == 1080) && m_videoWidth == 1920;
@@ -892,7 +795,7 @@ void Configurator::prepareData()
 	int len;
 	const int* arr = FFMPEG_AUDIOSAMPLE::getFrameSamples(m_videoFormat, len);
 	for (int i = 0; i < len; i++)
-		m_audioSampleCount = max(m_audioSampleCount, arr[i]);
+		m_audioSampleCount = m_audioSampleCount > arr[i] ? m_audioSampleCount:arr[i];
 
 	if (m_audioSampleCount == 0)
 		m_audioSampleCount = 1920;
@@ -971,7 +874,11 @@ size_t Configurator::LoadLSMConfigValue(EM_Channel_Detail &recorder, CamID nCame
 	nLeftPos = strItemValue.find(pFind);
 	if (std::string::npos != nLeftPos) //RTMP
 	{
+#ifdef _MSC_VER
 		sprintf_s(recorder.szItemName, MAX_PATH, "Cam%c", 'A' + nCameraIndex);
+#else
+		sprintf(recorder.szItemName, "Cam%c", 'A' + nCameraIndex);
+#endif 
 		recorder.providerType = FrameProviderType::FPT_RMTP_STREAM;
 		return nLeftPos;
 	}
@@ -981,8 +888,13 @@ size_t Configurator::LoadLSMConfigValue(EM_Channel_Detail &recorder, CamID nCame
 	nLeftPos = strItemValue.find(pFind);
 	if (std::string::npos != nLeftPos) //UDP
 	{
+#ifdef _MSC_VER
 		sprintf_s(recorder.szItemName, MAX_PATH, "%s",
 			strItemValue.substr(nLeftPos + nFindSize, nRightPos - (nLeftPos + nFindSize) - 1).c_str());
+#else
+		sprintf(recorder.szItemName, "%s",
+			strItemValue.substr(nLeftPos + nFindSize, nRightPos - (nLeftPos + nFindSize) - 1).c_str());
+#endif 
 		recorder.providerType = FrameProviderType::FPT_TSUDP_STREAM;
 		return nLeftPos;
 	}
@@ -995,8 +907,13 @@ size_t Configurator::LoadLSMConfigValue(EM_Channel_Detail &recorder, CamID nCame
 		nRightPos = strItemValue.find('\"', nLeftPos + nFindSize);
 		if (std::string::npos == nRightPos)
 			return std::string::npos;
+#ifdef _MSC_VER
 		sprintf_s(recorder.szItemName, MAX_PATH, "%s",
 			strItemValue.substr(nLeftPos + nFindSize, nRightPos - (nLeftPos + nFindSize)).c_str());
+#else
+		sprintf(recorder.szItemName, "%s",
+			strItemValue.substr(nLeftPos + nFindSize, nRightPos - (nLeftPos + nFindSize)).c_str());
+#endif 
 		size_t nLeftPos_1 = nRightPos;
 		nLeftPos_1 = strItemValue.find("|\"", nLeftPos_1);
 		if (std::string::npos != nLeftPos_1)
@@ -1005,8 +922,13 @@ size_t Configurator::LoadLSMConfigValue(EM_Channel_Detail &recorder, CamID nCame
 			nRightPos = strItemValue.size();
 			if (std::string::npos != nRightPos)
 			{
+#ifdef _MSC_VER
 				sprintf_s(recorder.szAudioName, MAX_PATH, "%s",
 					strItemValue.substr(nLeftPos_1 + nFindSize, nRightPos - (nLeftPos_1 + nFindSize) - 1).c_str());
+#else
+				sprintf(recorder.szAudioName, "%s",
+					strItemValue.substr(nLeftPos_1 + nFindSize, nRightPos - (nLeftPos_1 + nFindSize) - 1).c_str());
+#endif
 			}
 		}
 		if (m_defaultProviderType == FrameProviderType::FPT_MJPEG_FILE)
@@ -1021,8 +943,13 @@ size_t Configurator::LoadLSMConfigValue(EM_Channel_Detail &recorder, CamID nCame
 	nLeftPos = strItemValue.find(pFind);
 	if (std::string::npos != nLeftPos) //NDI
 	{
+#ifdef _MSC_VER
 		sprintf_s(recorder.szItemName, MAX_PATH, "%s",
 			strItemValue.substr(nLeftPos + nFindSize, nRightPos - (nLeftPos + nFindSize) - 1).c_str());
+#else
+		sprintf(recorder.szItemName, "%s",
+			strItemValue.substr(nLeftPos + nFindSize, nRightPos - (nLeftPos + nFindSize) - 1).c_str());
+#endif 
 		recorder.providerType = FrameProviderType::FPT_NDI;
 		return nLeftPos;
 	}
@@ -1054,18 +981,142 @@ bool Configurator::sendCmdToNetwork()
 	return m_sendCmdToNetwork;
 }
 
-void Configurator::loadPGM1NDIConfig()
+void Configurator::GetCurrentPath(char buf[], char* pFileName)
 {
-	CHAR strValue[MAX_PATH];
-	GetPrivateProfileStringA("CAMERA_CONFIG", "PGM1_NDI", "", strValue, MAX_PATH, m_strConfigPath);
-	m_strPGM1NDIName = strValue;
-	if (!m_strPGM1NDIName.empty())
+#ifdef _MSC_VER
+	GetModuleFileNameA(NULL, buf, MAX_PATH);
+#else
+	char pidfile[64];
+	int bytes;
+	int fd;
+	sprintf(pidfile, "/proc/%d/cmdline", getpid());
+	fd = open(pidfile, O_RDONLY, 0);
+	bytes = read(fd, buf, MAX_PATH);
+	close(fd);
+	buf[MAX_PATH] = '\0';
+#endif
+	char* p = &buf[strlen(buf)];
+	do
 	{
-		m_PGMChannelMask.set(EM_ConsumerChannel_PGM1_NDI);
-		m_stConfig.player[EM_ConsumerChannel_PGM1_NDI].chlType = EM_Channel_Type::EM_Channel_Type_Consumer;
-		m_stConfig.player[EM_ConsumerChannel_PGM1_NDI].nIndexID = EM_ConsumerChannel_PGM1_NDI;
-		m_stConfig.player[EM_ConsumerChannel_PGM1_NDI].nSDIID = EM_ConsumerChannel_PGM1_NDI;
-		sprintf_s(m_stConfig.player[EM_ConsumerChannel_PGM1_NDI].szItemName, MAX_PATH, "%s", strValue);
-		++m_nbStreamRec;
-	}
+		*p = '\0';
+		p--;
+#ifdef _MSC_VER
+	} while ('\\' != *p);
+#else
+	} while ('/' != *p);
+#endif
+	p++;
+	memcpy(p, pFileName, strlen(pFileName));
 }
+
+void Configurator::IniReadValue(char* section, char* key, char* val)
+{
+#ifndef _MSC_VER
+	FILE* fp;
+	int i = 0;
+	int lineContentLen = 0;
+	int position = 0;
+	char lineContent[MAX_PATH];
+	bool bFoundSection = false;
+	bool bFoundKey = false;
+	fp = fopen(m_strConfigPath, "r");
+	if (fp == NULL)
+	{
+		printf("%s: Opent file %s failed.\n", __FILE__, m_strConfigPath);
+		return;
+	}
+	while (feof(fp) == 0)
+	{
+		memset(lineContent, 0, MAX_PATH);
+		fgets(lineContent, MAX_PATH, fp);
+		if ((lineContent[0] == ';') || (lineContent[0] == '\0') || (lineContent[0] == '\r') || (lineContent[0] == '\n'))
+		{
+			continue;
+		}
+
+		//check section
+		if (strncmp(lineContent, section, strlen(section)) == 0)
+		{
+			bFoundSection = true;
+			//printf("Found section = %s\n", lineContent);
+			while (feof(fp) == 0 && !bFoundKey)
+			{
+				memset(lineContent, 0, MAX_PATH);
+				fgets(lineContent, MAX_PATH, fp);
+				//check key
+				if (strncmp(lineContent, key, strlen(key)) == 0)
+				{
+					bFoundKey = true;
+					lineContentLen = strlen(lineContent);
+					//find value
+					for (i = strlen(key); i < lineContentLen; i++)
+					{
+						if (lineContent[i] == '=')
+						{
+							position = i + 1;
+							break;
+						}
+					}
+					if (i >= lineContentLen) 
+						break;
+					strncpy(val, lineContent + position, strlen(lineContent + position));
+					lineContentLen = strlen(val);
+					for (i = 0; i < lineContentLen; i++)
+					{
+						if ((lineContent[i] == '\0') || (lineContent[i] == '\r') || (lineContent[i] == '\n'))
+						{
+							val[i] = '\0';
+							break;
+						}
+					}
+				}
+				else if (lineContent[0] == '[')
+				{
+					break;
+				}
+			}
+			break;
+		}
+	}
+	if (!bFoundSection) 
+		printf("No section = %s\n", section); 
+	else if (!bFoundKey) 
+		printf("No key = %s\n", key);
+	fclose(fp);
+#endif
+}
+
+int Configurator::readStringValue(const char* section, char* key, char* val)
+{	
+	char sect[MAX_PATH];
+	if (section == NULL || key == NULL || val == NULL)
+	{
+		printf("%s: input parameter(s) is NULL!\n", __func__);
+		return -1;
+	}
+	memset(sect, 0, MAX_PATH);	
+#ifdef _MSC_VER
+	GetPrivateProfileStringA(section, key, "", val, MAX_PATH, m_strConfigPath);
+#else
+	sprintf(sect, "[%s]", section);
+	IniReadValue(sect, key, val);
+#endif _MSC_VER
+	return 0;
+}
+
+int Configurator::readIntValue(const char* section, char* key)
+{
+	char strValue[MAX_PATH];
+	memset(strValue, '\0', MAX_PATH);
+#ifdef _MSC_VER
+	return GetPrivateProfileIntA(section, key, static_cast<int>(FPTVideoFormat::FP_FORMAT_1080i_5000), m_strConfigPath);
+#else
+	if (readStringValue(section, key, strValue) != 0)
+	{
+		printf("%s: error", __func__);
+		return 0;
+	}
+	return(atoi(strValue));
+#endif	
+}
+

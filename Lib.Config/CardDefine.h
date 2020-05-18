@@ -1,6 +1,10 @@
 #pragma once
+#ifdef _MSC_VER
 #include <Windows.h>
-#include <iterator>
+#else
+#define MAX_PATH  260
+#endif _MSC_VER
+
 #include "cnlInfo.h"
 enum EM_ConsumerChannel
 {

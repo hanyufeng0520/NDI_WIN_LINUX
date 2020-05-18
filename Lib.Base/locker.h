@@ -1,16 +1,14 @@
 #pragma once
-#include <Windows.h>
+#include <mutex>
 
 class Locker
 {
-	CRITICAL_SECTION	 m_locker;
+	std::recursive_mutex	 m_locker;
 
 public:
-	Locker() {
-		InitializeCriticalSection(&m_locker);
+	Locker() {		
 	};
-	~Locker() {
-		DeleteCriticalSection(&m_locker);
+	~Locker() {		
 	};
 
 	Locker& operator=(const Locker&) = delete;
@@ -18,14 +16,14 @@ public:
 
 	void lock()
 	{
-		EnterCriticalSection(&m_locker);
+		m_locker.lock();
 	};
 	bool try_lock()
 	{
-		return TryEnterCriticalSection(&m_locker);
+		return m_locker.try_lock();
 	};
 	void unlock() {
-		LeaveCriticalSection(&m_locker);
+		m_locker.unlock();
 	};
 };
 

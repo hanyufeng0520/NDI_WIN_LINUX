@@ -35,6 +35,7 @@ unsigned long CompVideoFrame::getDataSize() const
 
 int	CompVideoFrame::saveToFile(const char* _fileName) const
 {
+	/*
 	FILE* fp = nullptr;
 
 	fopen_s(&fp, _fileName, "wb");
@@ -44,6 +45,7 @@ int	CompVideoFrame::saveToFile(const char* _fileName) const
 	fwrite(getRaw(), getDataSize(), 1, fp);
 
 	fclose(fp);
+	*/
 	return 0;
 }
 

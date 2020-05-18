@@ -21,7 +21,7 @@ void getTickCount(cpuTick& _tick)
 	QueryPerformanceCounter((LARGE_INTEGER*)&_tick);
 #else
 	struct timeval now;
-	gettimeofday(&now, NULL);
+	gettimeofday(&now,nullptr);
 	_tick = now.tv_sec + now.tv_usec / 1000000.0;
 #endif _MSC_VER
 }

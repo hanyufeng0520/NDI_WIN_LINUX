@@ -213,7 +213,6 @@
     <ClCompile Include="IConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudioSampleHeader.h" />
     <ClInclude Include="CardDefine.h" />
     <ClInclude Include="cnlInfo.h" />
     <ClInclude Include="Configurator.h" />

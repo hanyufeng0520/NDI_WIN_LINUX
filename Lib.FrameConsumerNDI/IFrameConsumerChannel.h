@@ -1,7 +1,7 @@
 #pragma once
 #include "../Lib.Base/audioFrame.h"
 #include "../Lib.Base/videoFrame.h"
-#include <cstdint>
+#include <string.h>
 
 enum FrameConsumerType
 {

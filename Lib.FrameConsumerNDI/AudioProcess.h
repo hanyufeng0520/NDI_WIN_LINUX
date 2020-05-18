@@ -8,6 +8,7 @@ extern "C"
 #include "../inc/ffmpeg/libavutil/samplefmt.h"
 #include "../inc/ffmpeg/libswresample/swresample.h"
 }
+
 class CAudioProcess
 {
 public:

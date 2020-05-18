@@ -1,5 +1,5 @@
+#include <string.h>
 #include "audioFrame.h"
-#include <malloc.h>
 
 AudioFrame::AudioFrame(int  _monoCnt)
 {

@@ -15,7 +15,7 @@
 #define NB_LIVETGA		2
 enum CamID :uint32_t  //this enum only using in BE.
 {
-	ID_InValidCam = -1,
+	ID_InValidCam = 0xFFFFFFF,
 	ID_Cam_InValid = ID_InValidCam,
 	ID_Cam_0 = 0,
 	ID_Cam_1,
@@ -39,32 +39,7 @@ enum CamID :uint32_t  //this enum only using in BE.
 	ID_Cam_MAX,
 	ID_Cam_ASIO = ID_Cam_MAX,
 };
-//enum CamID :uint32_t  //this enum only using in BE.
-//{
-//	ID_InValidCam = -1,
-//	ID_Cam_InValid = ID_InValidCam,
-//	ID_Cam_0 = 0,
-//	ID_Cam_1,
-//	ID_Cam_2,
-//	ID_Cam_3,
-//	ID_Cam_4,
-//	ID_Cam_5,
-//	ID_Cam_6,
-//	ID_Cam_7,
-//	ID_Cam_8,
-//	ID_Cam_9,
-//	ID_Cam_10,
-//	ID_Cam_11,
-//	ID_Cam_12,
-//	ID_Cam_13,
-//	ID_Cam_14,
-//	ID_Cam_15,
-//	ID_Cam_PGMDirty=0x1000,
-//	ID_Cam_PGMClean=0x1100,
-//	ID_Cam_Import=0x1200,
-//	ID_Cam_ASIO,
-//	ID_Cam_NEW_MAX,
-//};
+
 enum CnlID :uint32_t
 {
 	ID_Replay1_0,

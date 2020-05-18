@@ -1,6 +1,5 @@
 #include "AudioProcess.h"
-#include "../lib.Config/IConfig.h"
-
+#include "../Lib.Config/IConfig.h"
 CAudioProcess::CAudioProcess()
 {
 	m_bInit = false;
@@ -42,10 +41,10 @@ int CAudioProcess::ProcessAudioToFLT(int nSampleCount, unsigned char* pSrcAudio,
 	if (!m_bInit)
 		return ret;
 	int nSampleCountNew = audioCount * nSampleCount;
-	long *pAudioNew = (long *)m_pSrcAudioNew;
+	long* pAudioNew = (long*)m_pSrcAudioNew;
 	for (int nIndex = 0; nIndex < audioCount; ++nIndex)
 	{
-		long *pSrc = (long *)pSrcAudio;
+		long* pSrc = (long*)pSrcAudio;
 		for (int i = 0; i < nSampleCount; i++)
 		{
 			*pAudioNew++ = pSrc[nIndex];
@@ -56,7 +55,7 @@ int CAudioProcess::ProcessAudioToFLT(int nSampleCount, unsigned char* pSrcAudio,
 	// 	if (audioCount == 16)
 	// 		ret = swr_convert(swr_ctx, (uint8_t **)&pDstAudio, dst_nb_samples, (const uint8_t **)&pSrcAudio, nSampleCount);
 	// 	else
-	ret = swr_convert(swr_ctx, (uint8_t * *)&pDstAudio, dst_nb_samples, (const uint8_t * *)&m_pSrcAudioNew, nSampleCountNew);
+	ret = swr_convert(swr_ctx, (uint8_t**)&pDstAudio, dst_nb_samples, (const uint8_t**)&m_pSrcAudioNew, nSampleCountNew);
 	if (ret < 0)
 		return ret;
 	int nDestSize = av_samples_get_buffer_size(&dst_linesize, dst_nb_channels, ret, dst_sample_fmt, 1);

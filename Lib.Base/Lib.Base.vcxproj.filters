@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="videoFrame.cpp">
@@ -27,22 +28,13 @@
     <ClCompile Include="audioFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="eventClock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SemaphoreClock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommonHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CapturePoolMgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="platform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LoopBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="timecode.cpp">
@@ -68,19 +60,10 @@
     <ClInclude Include="ObjectPoolEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="eventClock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SemaphoreClock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CommonHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="timecode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="easyThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CapturePoolMgr.h">
@@ -98,13 +81,7 @@
     <ClInclude Include="SyncList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LoopBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VideoFormatDef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StringHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="async_thread.h">
@@ -135,6 +112,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FrameListEx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSampleHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

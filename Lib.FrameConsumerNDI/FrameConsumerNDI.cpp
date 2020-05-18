@@ -1,5 +1,5 @@
 ﻿#include "FrameConsumerNDI.h"
-#include "../lib.Config/IConfig.h"
+#include "../Lib.Config/IConfig.h"
 #include "../Lib.Base/ClockTimer.h"
 
 CFrameConsumerNDI::CFrameConsumerNDI()
@@ -95,7 +95,7 @@ void CFrameConsumerNDI::sendNDIThread()
 
 void CFrameConsumerNDI::sentToNDI()
 {
-	static UINT64 nLoopTimes = 0;
+	static uint64_t nLoopTimes = 0;
 	static ClockTimer timer;
 	static float fInterval = Config->getInterval();
 	static int nMaxSamples = Config->getAudioSampleCount();

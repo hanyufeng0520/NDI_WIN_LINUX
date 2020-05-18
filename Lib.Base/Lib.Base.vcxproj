@@ -218,15 +218,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="CMakeLists.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="audioFrame.cpp" />
-    <ClCompile Include="CommonHelper.cpp" />
     <ClCompile Include="compVideoFrame.cpp" />
-    <ClCompile Include="eventClock.cpp" />
     <ClCompile Include="CapturePoolMgr.cpp" />
-    <ClCompile Include="LoopBuffer.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="SemaphoreClock.cpp" />
     <ClCompile Include="SRWLocker.cpp" />
@@ -236,25 +234,21 @@
   <ItemGroup>
     <ClInclude Include="async_thread.h" />
     <ClInclude Include="audioFrame.h" />
-    <ClInclude Include="CommonHelper.h" />
+    <ClInclude Include="AudioSampleHeader.h" />
     <ClInclude Include="compVideoFrame.h" />
     <ClInclude Include="ControlerTimeCode.h" />
-    <ClInclude Include="easyThread.h" />
-    <ClInclude Include="eventClock.h" />
     <ClInclude Include="FrameList.h" />
     <ClInclude Include="FrameListEx.h" />
     <ClInclude Include="GPUFrame.h" />
     <ClInclude Include="IBaseFrame.h" />
     <ClInclude Include="IMasterClock.h" />
     <ClInclude Include="locker.h" />
-    <ClInclude Include="LoopBuffer.h" />
     <ClInclude Include="ObjectPoolEx.h" />
     <ClInclude Include="CapturePoolMgr.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="Synchronized.h" />
     <ClInclude Include="SemaphoreClock.h" />
     <ClInclude Include="SRWLocker.h" />
-    <ClInclude Include="StringHelper.h" />
     <ClInclude Include="SyncList.h" />
     <ClInclude Include="SyncQueue.h" />
     <ClInclude Include="targetver.h" />

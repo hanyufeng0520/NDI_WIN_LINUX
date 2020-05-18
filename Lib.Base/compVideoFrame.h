@@ -2,6 +2,7 @@
 #include <cstdint>
 #include "timecode.h"
 #include <memory>
+#include <string.h>
 #include "IBaseFrame.h"
 
 //|-----------|

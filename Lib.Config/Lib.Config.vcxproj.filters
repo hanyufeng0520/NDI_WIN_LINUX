@@ -38,8 +38,5 @@
     <ClInclude Include="cnlInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AudioSampleHeader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

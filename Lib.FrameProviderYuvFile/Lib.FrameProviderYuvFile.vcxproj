@@ -205,7 +205,6 @@
     <ClInclude Include="FrameProviderYuvFile.h" />
     <ClInclude Include="IFPInputCallBack.h" />
     <ClInclude Include="IFrameProviderChannel.h" />
-    <ClInclude Include="MarkerBuilder.h" />
     <ClInclude Include="WaveHeader.h" />
     <ClInclude Include="WaveReader.h" />
   </ItemGroup>

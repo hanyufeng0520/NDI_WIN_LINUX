@@ -1,6 +1,5 @@
 #pragma once
-#include <tchar.h>
-#include <windows.h>
+#include "../Lib.Base/platform.h"
 #include <memory>
 #include "WaveHeader.h"
 
@@ -9,9 +8,9 @@ class AudioFrame;
 class CWaveReader
 {
 	wav_t m_wavInfo;
-	BYTE* m_pRawWave;
-	TCHAR m_szLogFile[MAX_PATH];
-	void  initLog(TCHAR* szLogFile);
+	unsigned char* m_pRawWave;
+	wchar_t *m_szLogFile;
+	void  initLog(wchar_t* szLogFile);
 	int   openFile(const char* file_name);
 	int   checkFileHeader();
 	int   getMarker(char(&_marker)[4], int& size);
@@ -24,7 +23,7 @@ class CWaveReader
 public:
 	CWaveReader();
 	~CWaveReader();
-	bool open(const char *file_name, TCHAR *szLogFile);
+	bool open(const char *file_name, wchar_t*szLogFile);
 	void close();
 	bool getAudioFrame(std::shared_ptr<AudioFrame>& _aFrame);
 };

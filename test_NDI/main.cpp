@@ -4,11 +4,13 @@
 #include "../Lib.Base/CapturePoolMgr.h"
 #include "../lib.Config/IConfig.h"
 
+#ifdef _MSC_VER
 #pragma comment(lib, "wbemuuid.lib")
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "Processing.NDI.Lib.x64.lib")
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "swresample.lib")
+#endif 
 
 class Cnl : public IFPInputCallBack
 {

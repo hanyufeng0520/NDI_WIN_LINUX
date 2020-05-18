@@ -1,4 +1,5 @@
 #include "timecode.h"
+#include<string.h>
 
 Timecode::Timecode()
 {
@@ -86,7 +87,11 @@ void Timecode::setTC(const Timecode& _tc)
 std::string Timecode::string(bool _isDrop) const
 {
 	char tc[20];
+#ifdef _MSC_VER
 	sprintf_s(tc, "%2.2d:%2.2d:%2.2d%s%2.2d ", hour, minute, second, _isDrop ? ";" : ":", frame);
+#else
+	sprintf(tc, "%2.2d:%2.2d:%2.2d%s%2.2d ", hour, minute, second, _isDrop ? ";" : ":", frame);
+#endif _MSC_VER
 	return tc;
 }
 
