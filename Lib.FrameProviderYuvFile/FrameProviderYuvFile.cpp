@@ -319,7 +319,7 @@ void CFrameProviderYuvFile::SendOneVideoFrm()
 				printf("SendOneVideoFrm dwCnlID(%d) sendLoop(%I64d) novCount(%I64d)\n", m_dwCnlID, sendLoop, novCount);
 
 #else
-				printf("SendOneVideoFrm dwCnlID(%d) sendLoop(%llu) novCount(%I64d)\n", m_dwCnlID, sendLoop, novCount);
+				printf("SendOneVideoFrm dwCnlID(%d) sendLoop(%llu) novCount(%llu)\n", m_dwCnlID, sendLoop, novCount);
 #endif
 			}
 		}
