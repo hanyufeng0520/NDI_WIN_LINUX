@@ -17,8 +17,8 @@ class CFrameProviderYuvFile :public IFrameProviderChannel
 	IFPInputCallBack*        m_pGetFrameCB;
 	std::queue<pVFrame>		 m_queueFrame;
 	std::queue<pAframe>		 m_queueAudio;
-	async_future             m_threadHandle;
-	async_future             m_threadCallBack;
+	async_future             m_threadSendFrames;
+	async_future             m_threadReadCallBack;
 	CWaveReader				 m_audioReader;
 	wchar_t					 m_szLogFile[MAX_PATH];
 	std::atomic_long		 m_frameConsumed;
@@ -30,7 +30,7 @@ class CFrameProviderYuvFile :public IFrameProviderChannel
 	int		loadVideoFrameFromDisk(pVFrame& _uncompFrame);
 	void	closeChannel();
 	void	SendOneVideoFrm();
-	void	callBack() ;
+	void	readThread() ;
 	void	CloseVideoFile();
 	int		initAudio(const sFrameProvider_Parameter& pCnlParameter);
 	int		initVideo(const sFrameProvider_Parameter& pCnlParameter);

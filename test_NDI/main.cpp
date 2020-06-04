@@ -97,9 +97,9 @@ int Cnl::stop()
 int main()
 {
 	CapturePoolMgr* pCapturePoolMgr = CapturePoolMgr::GetInstance();
-	pCapturePoolMgr->initialize(Config->getVideoFormat(), 40, 40, false);
+	pCapturePoolMgr->initialize(Config->getVideoFormat(), 200, 200, false);
 	const Card_Config& pCardConfig = Config->getCardConfig();
-	uint32_t nCnl = 1;
+	uint32_t nCnl = 8;
 	if (Config->is4K())
 		nCnl = 1;
 	Cnl* cnl = new Cnl[nCnl];
@@ -118,7 +118,11 @@ int main()
 			printf("index :%d name(%s) init done!\n", i, NDI_name);
 		}
 	}
-
+#ifdef _MSC_VER
+	Sleep(1);
+#else
+	usleep(1000);
+#endif 	
 	for (int i = 0; i < nCnl; i++)
 		cnl[i].start();
 

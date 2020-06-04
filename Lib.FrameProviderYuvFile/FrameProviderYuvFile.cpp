@@ -98,8 +98,7 @@ int CFrameProviderYuvFile::addChannel(uint32_t dwCnlID, const sFrameProvider_Par
 
 	m_bStop = false;
 	m_dwTimes = 0;
-	m_threadHandle = async_thread(thread_priority::normal, &CFrameProviderYuvFile::SendOneVideoFrm, this);
-	m_threadCallBack = async_thread(thread_priority::normal, &CFrameProviderYuvFile::callBack, this);
+	m_threadReadCallBack = async_thread(thread_priority::normal, &CFrameProviderYuvFile::readThread, this);
 	printf("CFrameProviderYuvFile::addChannel Okay\n ");
 	m_initDone = true;
 	return 0;
@@ -118,10 +117,11 @@ void CFrameProviderYuvFile::frameConsumed()
 
 int CFrameProviderYuvFile::startCapture()
 {
+	m_threadSendFrames = async_thread(thread_priority::normal, &CFrameProviderYuvFile::SendOneVideoFrm, this);
 	return 0;
 }
 
-void CFrameProviderYuvFile::callBack()
+void CFrameProviderYuvFile::readThread()
 {
 	while (!m_bStop)
 	{
@@ -231,10 +231,10 @@ int	CFrameProviderYuvFile::loadVideoFrameFromDisk(pVFrame& _uncompFrame)
 void CFrameProviderYuvFile::closeChannel()
 {
 	m_bStop = true;
-	if (m_threadCallBack.valid())
-		m_threadCallBack.get();
-	if (m_threadHandle.valid())
-		m_threadHandle.get();
+	if (m_threadReadCallBack.valid())
+		m_threadReadCallBack.get();
+	if (m_threadSendFrames.valid())
+		m_threadSendFrames.get();
 	if (m_fpVideo != nullptr)
 		fclose(m_fpVideo);
 	m_initDone = false;
