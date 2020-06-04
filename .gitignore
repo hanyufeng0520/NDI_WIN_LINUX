@@ -14,3 +14,7 @@
 /x64/Release_Debug
 /x64/Release
 /x64/test_NDI
+/Lib.FMT/x64
+/Lib.Logger/x64/Debug
+/Lib.Logger/x64/Release
+/Lib.Logger/x64/Release_Debug

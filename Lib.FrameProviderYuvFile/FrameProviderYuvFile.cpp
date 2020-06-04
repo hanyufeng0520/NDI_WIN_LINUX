@@ -5,6 +5,8 @@
 #include "../Lib.Base/AudioSampleHeader.h"
 #ifndef _MSC_VER
 #include <unistd.h>
+#else
+#include "../Lib.Logger/LogWriter.h"
 #endif 
 
 // ffmpeg - i source_file -vcodec rawvideo -pix_fmt uyvy422 -t 60 -vf scale=1920:1080 out.YUV
@@ -56,7 +58,10 @@ int CFrameProviderYuvFile::initVideo(const sFrameProvider_Parameter& pCnlParamet
 	fopen_s(&m_fpVideo, pCnlParameter.szFileName, "rb");
 	if (m_fpVideo == nullptr)
 	{
-		printf("CFrameProviderYuvFile::addChannel Failed.Open video file %s failed.", pCnlParameter.szFileName);
+#ifdef _MSC_VER
+		WriteLogA(m_szLogFile, LOGLEVEL::Error, "CFrameProviderYuvFile::initVideo Failed.Open video file %s failed.", pCnlParameter.szFileName);
+#endif
+		printf("CFrameProviderYuvFile::initVideo Failed.Open video file %s failed.", pCnlParameter.szFileName);
 		return -1;
 	}
 
@@ -71,6 +76,7 @@ int CFrameProviderYuvFile::initVideo(const sFrameProvider_Parameter& pCnlParamet
 	}
 #ifdef _MSC_VER
 	_fseeki64(m_fpVideo, 0, SEEK_SET);
+	WriteLogA(m_szLogFile, LOGLEVEL::Info, "CFrameProviderYuvFile::initVideo Okay.Open video file %s .", pCnlParameter.szFileName);
 #else
 	fseeko64(m_fpVideo, 0, SEEK_SET);
 #endif 	
@@ -84,13 +90,16 @@ int CFrameProviderYuvFile::addChannel(uint32_t dwCnlID, const sFrameProvider_Par
 	m_pGetFrameCB = _pGetFrameCB;
 	m_dwCnlID = dwCnlID;
 #ifdef _MSC_VER
-	swprintf_s(m_szLogFile, MAX_PATH, L"C:\\Logs\\frame2TCP\\ProviderYuvFile_%d.Log", dwCnlID);
+	swprintf_s(m_szLogFile, MAX_PATH, L"C:\\Logs\\test_NDI\\ProviderYuvFile_%d.Log", dwCnlID);
 #else 
 	//
 #endif
 	if (initVideo(pCnlParameter) != 0)
 	{
 		printf("initVideo failed\n ");
+#ifdef _MSC_VER
+		WriteLogA(m_szLogFile, LOGLEVEL::Warn, "addChannel initVideo failed");
+#endif
 		return -1;
 	}	
 
@@ -100,6 +109,9 @@ int CFrameProviderYuvFile::addChannel(uint32_t dwCnlID, const sFrameProvider_Par
 	m_dwTimes = 0;
 	m_threadReadCallBack = async_thread(thread_priority::normal, &CFrameProviderYuvFile::readThread, this);
 	printf("CFrameProviderYuvFile::addChannel Okay\n ");
+#ifdef _MSC_VER
+	WriteLogA(m_szLogFile, LOGLEVEL::Info, "addChannel Okay");
+#endif
 	m_initDone = true;
 	return 0;
 }
@@ -117,7 +129,12 @@ void CFrameProviderYuvFile::frameConsumed()
 
 int CFrameProviderYuvFile::startCapture()
 {
+	if (!m_initDone)
+		return -1;
 	m_threadSendFrames = async_thread(thread_priority::normal, &CFrameProviderYuvFile::SendOneVideoFrm, this);
+#ifdef _MSC_VER
+	WriteLogA(m_szLogFile, LOGLEVEL::Info, "startCapture Okay");
+#endif
 	return 0;
 }
 
@@ -125,10 +142,15 @@ void CFrameProviderYuvFile::readThread()
 {
 	while (!m_bStop)
 	{
-		if (m_queueFrame.size() < 10)//because we only have 15 for each cam
+		if (m_queueFrame.size() < 15)//because we only have 15 for each cam
 		{
-			if (m_queueFrame.size() < 5)
-				printf("Low level %d for %d \n", m_queueFrame.size(), m_dwCnlID);
+			if (m_queueFrame.size() < 5 || m_queueAudio.size() < 5)
+#ifdef _MSC_VER
+				WriteLogW(m_szLogFile, LOGLEVEL::Warn, L"readThread dwCnlID(%d) now Low level videoLIST %d audioList %d", m_dwCnlID, m_queueFrame.size(), m_queueAudio.size());
+#else
+				printf("readThread dwCnlID(%d) now Low level videoLIST %d audioList %d \n", m_dwCnlID, m_queueFrame.size(), m_queueAudio.size());
+#endif
+
 
 			pVFrame pFrame = nullptr;
 			pAframe aFrame = nullptr;
@@ -175,7 +197,11 @@ int CFrameProviderYuvFile::buildFrame(pVFrame& _uncompFrame, pAframe& _aFrame)
 
 	if (!_uncompFrame || !_aFrame)
 	{
-		printf("buildFrame getNew failed--->\n");
+#ifdef _MSC_VER
+		WriteLogW(m_szLogFile, LOGLEVEL::Warn, L"buildFrame dwCnlID(%d) getNew failed videoLIST %d audioList %d", m_dwCnlID, m_queueFrame.size(), m_queueAudio.size());
+#else
+		printf("buildFrame dwCnlID(%d) getNew failed videoLIST %d audioList %d \n", m_dwCnlID, m_queueFrame.size(), m_queueAudio.size());
+#endif
 		return -2;
 	}
 	
@@ -211,7 +237,7 @@ int	CFrameProviderYuvFile::loadVideoFrameFromDisk(pVFrame& _uncompFrame)
 #endif
 	if (_uncompFrame->loadFromFile(m_fpVideo) != 0)
 	{
-		//printf("Failed to load frame. Loop\n");
+
 #ifdef _MSC_VER
 		_fseeki64(m_fpVideo, 0, SEEK_SET);
 #else
@@ -244,6 +270,8 @@ void CFrameProviderYuvFile::closeChannel()
 
 void CFrameProviderYuvFile::SendOneVideoFrm()
 {
+	uint64_t  sendLoop = 0;
+	uint64_t  novCount = 0;
 	while (!m_bStop)
 	{
 		if (m_frameConsumed)
@@ -259,6 +287,19 @@ void CFrameProviderYuvFile::SendOneVideoFrm()
 				m_queueFrame.pop();
 				m_queueAudio.pop();
 			}
+			else
+			{
+#ifdef _MSC_VER
+				WriteLogW(m_szLogFile, LOGLEVEL::Warn, L"SendOneVideoFrm dwCnlID(%d) sendLoop(%I64d) novCount(%I64d) NO data videoLIST %d audioList %d", 
+					m_dwCnlID, sendLoop,++novCount, m_queueFrame.size(), m_queueAudio.size());
+				printf("SendOneVideoFrm dwCnlID(%d) sendLoop(%I64d) novCount(%I64d) NO data videoLIST %d audioList %d \n",
+					m_dwCnlID, sendLoop, ++novCount, m_queueFrame.size(), m_queueAudio.size());
+
+#else
+				printf("SendOneVideoFrm dwCnlID(%d) sendLoop(%llu) novCount(%llu) NO data videoLIST %d audioList %d \n",
+					m_dwCnlID, sendLoop, ++novCount, m_queueFrame.size(), m_queueAudio.size());
+#endif
+			}
 			m_locker.unlock();
 
 			if (m_pGetFrameCB != nullptr && _uncompFrame != nullptr && _aFrame != nullptr)
@@ -271,6 +312,16 @@ void CFrameProviderYuvFile::SendOneVideoFrm()
 #else
 			usleep(5000);
 #endif 
+			if (sendLoop++ %1500 == 0)
+			{
+#ifdef _MSC_VER
+				WriteLogW(m_szLogFile, LOGLEVEL::Info, L"SendOneVideoFrm dwCnlID(%d) sendLoop(%I64d) novCount(%I64d)", m_dwCnlID, sendLoop, novCount);
+				printf("SendOneVideoFrm dwCnlID(%d) sendLoop(%I64d) novCount(%I64d)\n", m_dwCnlID, sendLoop, novCount);
+
+#else
+				printf("SendOneVideoFrm dwCnlID(%d) sendLoop(%llu) novCount(%I64d)\n", m_dwCnlID, sendLoop, novCount);
+#endif
+			}
 		}
 		else
 #ifdef _MSC_VER

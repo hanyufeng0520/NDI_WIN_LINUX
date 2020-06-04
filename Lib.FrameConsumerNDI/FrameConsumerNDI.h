@@ -14,8 +14,8 @@ class CFrameConsumerNDI :public IFrameConsumerChannel
 	SemaphoreClock                          m_SemaphoreClock;
 	SemaphoreClock                          m_SemaphoreClockA;
 	const static uint32_t                   m_dwMax = 3;
-	uint64_t	                            m_outNum = 0;
-	uint64_t	                            m_sendNum = 0;
+	uint64_t	                            m_outputNum = 0;
+	uint64_t	                            m_sendLoop = 0;
 	SyncList<pVFrame>                       m_listV;
 	SyncList<pAframe>                       m_listA;
 	NDIlib_video_frame_v2_t					NDI_video_frame;
@@ -24,7 +24,7 @@ class CFrameConsumerNDI :public IFrameConsumerChannel
 	bool							        m_bExit = false;
 	NDIlib_send_instance_t			        m_pNDI_send = nullptr;
 	CAudioProcess						    m_stResample;
-
+	uint32_t								m_dwCnlID = 0;
 	void sendNDIThread();
 	void sentToNDI();
 public:

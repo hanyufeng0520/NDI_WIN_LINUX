@@ -5,6 +5,8 @@
 #include "../Lib.Config/IConfig.h"
 
 #ifdef _MSC_VER
+#include "../Lib.Logger/LogWriter.h"
+
 #pragma comment(lib, "wbemuuid.lib")
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "Processing.NDI.Lib.x64.lib")
@@ -96,6 +98,12 @@ int Cnl::stop()
 
 int main()
 {
+#ifdef _MSC_VER
+	InitializeLogger();
+#endif
+	printf("*************** %s ***************\r\n", Config->getVideoFormatString().c_str());
+	printf("\r\n");
+
 	CapturePoolMgr* pCapturePoolMgr = CapturePoolMgr::GetInstance();
 	pCapturePoolMgr->initialize(Config->getVideoFormat(), 200, 200, false);
 	const Card_Config& pCardConfig = Config->getCardConfig();
@@ -107,6 +115,8 @@ int main()
 	{
 		if (pCardConfig.recorder[CamID(i)].providerType == FrameProviderType::FPT_YUV_FILE)
 		{
+			if((strlen(pCardConfig.recorder[CamID(i)].szItemName)) == 0)
+				continue;
 			char NDI_name[50];
 #ifdef _MSC_VER
 			sprintf_s(NDI_name, sizeof(NDI_name), "Cam%c", 'A' + i);
@@ -119,9 +129,9 @@ int main()
 		}
 	}
 #ifdef _MSC_VER
-	Sleep(1);
+	Sleep(1000);
 #else
-	usleep(1000);
+	usleep(1000000);
 #endif 	
 	for (int i = 0; i < nCnl; i++)
 		cnl[i].start();
@@ -132,5 +142,9 @@ int main()
 		cnl[i].stop();
 
 	delete[]cnl;
+
+#ifdef _MSC_VER
+	ShutdownLogger();
+#endif
 	return 0;
 }

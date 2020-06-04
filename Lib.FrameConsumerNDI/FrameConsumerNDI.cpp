@@ -1,7 +1,11 @@
 ﻿#include "FrameConsumerNDI.h"
 #include "../Lib.Config/IConfig.h"
 #include "../Lib.Base/ClockTimer.h"
-
+#define NDILOGPATH L"C:\\Logs\\test_NDI\\FrameConsumerNDI.log"
+#ifndef _MSC_VER
+#else
+#include "../Lib.Logger/LogWriter.h"
+#endif 
 CFrameConsumerNDI::CFrameConsumerNDI()
 {
 	m_pNDI_send = nullptr;
@@ -27,9 +31,10 @@ CFrameConsumerNDI::~CFrameConsumerNDI()
 
 int CFrameConsumerNDI::addChannel(uint32_t dwCnlID, const sFrameConsumer_Parameter& pCnlParameter)
 {
+	m_dwCnlID = dwCnlID;
 	if (!NDIlib_initialize())
 	{
-		printf("CFrameConsumerNDI::addChannel NDIlib_initialize failed.\n");
+		printf("CFrameConsumerNDI::addChannel NDIlib_initialize dwCnlID(%d) failed.\n", dwCnlID);
 		return -1;
 	}
 	FPTVideoFormat format = pCnlParameter.fpVideoFormat;
@@ -60,6 +65,9 @@ int CFrameConsumerNDI::addChannel(uint32_t dwCnlID, const sFrameConsumer_Paramet
 		return -1;
 	}
 	m_sendNDIThreadHandle = async_thread(thread_priority::normal, &CFrameConsumerNDI::sendNDIThread, this);
+#ifdef _MSC_VER
+	WriteLogA(NDILOGPATH, LOGLEVEL::Info, "CFrameConsumerNDI::addChannel nChannelID(%d) (%s)", dwCnlID, pCnlParameter.name);
+#endif
 	printf("CFrameConsumerNDI::addChannel (%s) OK \n", pCnlParameter.name);
 	return 0;
 }
@@ -71,12 +79,16 @@ int CFrameConsumerNDI::OutputFrames(uint32_t nChannelID, pVFrame pVideo, pAframe
 	m_listV.emplace_back(pVideo);
 	m_listA.emplace_back(pAudio);
 	m_SemaphoreClock.raiseEvent();
-	if (m_outNum++ % 3000 == 0)
+	if (m_outputNum++ % 1500 == 0)
+	{
 #ifdef _MSC_VER
-	printf("CFrameConsumerNDI::OutputFrames (%I64d) \n", m_outNum);
-#else
-	printf("CFrameConsumerNDI::OutputFrames (%llu) \n", m_outNum);
-#endif _MSC_VER
+		WriteLogW(NDILOGPATH, LOGLEVEL::Info, L"CFrameConsumerNDI::OutputFrames nChannelID(%d) outputNum(%I64d)", nChannelID, m_outputNum);
+		printf("CFrameConsumerNDI::OutputFrames nChannelID(%d) outputNum(%I64d) \n", nChannelID, m_outputNum);
+
+#endif
+		printf("CFrameConsumerNDI::OutputFrames nChannelID(%d) outputNum(%llu) \n", nChannelID, m_outputNum);
+	}
+
 	return 0;
 }
 
@@ -100,7 +112,6 @@ void CFrameConsumerNDI::sendNDIThread()
 
 void CFrameConsumerNDI::sentToNDI()
 {
-	static uint64_t nLoopTimes = 0;
 	static ClockTimer timer;
 	static float fInterval = Config->getInterval();
 	static int nMaxSamples = Config->getAudioSampleCount();
@@ -146,18 +157,23 @@ void CFrameConsumerNDI::sentToNDI()
 	float timeCostV = timerV.elapse_ms();
 	float timeCost = timer.elapse_ms();
 	if (timeCost > (fInterval + 3))
+	{
 #ifdef _MSC_VER
-		printf("sentToNDI nLoop(%I64d) timeout %.2f ms A(%.2f ms) V(%.2f ms) \n",nLoopTimes, timeCost, timeCostA, timeCostV);
+		WriteLogW(NDILOGPATH, LOGLEVEL::Warn, L"sentToNDI dwCnlID(%d) sendLoop(%I64d) timeout %.2f ms A(%.2f ms) V(%.2f ms)", m_dwCnlID, m_sendLoop, timeCost, timeCostA, timeCostV);
+		printf("sentToNDI dwCnlID(%d) sendLoop(%I64d) timeout %.2f ms A(%.2f ms) V(%.2f ms) \n", m_dwCnlID, m_sendLoop, timeCost, timeCostA, timeCostV);
 #else
-		printf("sentToNDI nLoop(%llu) timeout %.2f ms A(%.2f ms) V(%.2f ms) \n", nLoopTimes, timeCost, timeCostA, timeCostV);
+		printf("sentToNDI dwCnlID(%d) sendLoop(%llu) timeout %.2f ms A(%.2f ms) V(%.2f ms) \n", m_dwCnlID, m_sendLoop, timeCost, timeCostA, timeCostV);
 #endif _MSC_VER
+	}
 
-	++nLoopTimes;
-
-	if (m_sendNum++ % 100 == 0)
+	if (m_sendLoop++ % 1500 == 0)
+	{
 #ifdef _MSC_VER
-	printf("CFrameConsumerNDI::sentToNDI (%I64d) \n", m_sendNum);
+		WriteLogW(NDILOGPATH, LOGLEVEL::Info, L"sentToNDI dwCnlID(%d) sendLoop(%I64d)", m_dwCnlID, m_sendLoop);
+		printf("sentToNDI dwCnlID(%d) sendLoop(%I64d) \n", m_dwCnlID, m_sendLoop);
 #else
-	printf("CFrameConsumerNDI::sentToNDI (%llu) \n", m_sendNum);
+		printf("sentToNDI dwCnlID(%d) sendLoop(%llu) \n", m_dwCnlID, m_sendLoop); 
 #endif _MSC_VER
+	}
+
 }

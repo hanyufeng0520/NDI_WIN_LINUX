@@ -236,6 +236,11 @@
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lib.Logger\Lib.Logger.vcxproj">
+      <Project>{974d30cd-d7e8-424e-81df-6882824f736d}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
